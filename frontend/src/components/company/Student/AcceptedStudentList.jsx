@@ -72,9 +72,10 @@ const AcceptedStudentList = () => {
 
     fetchPlacementResults();
   }, [userId]);
-
+  // console.log(selectedStudentId);
   const openProgressModal = (student) => {
-    setSelectedStudent(student);
+    setSelectedStudent(student.student_id);
+    // console.log(selectedStudent);
     setShowModal(true);
   };
 
@@ -140,12 +141,12 @@ const AcceptedStudentList = () => {
           </tbody>
         </PlacementResultTable>
         {showModal && selectedStudent && (
-        <Progress
-          showModal={showModal}
-          setShowModal={setShowModal}
-          student={selectedStudent}
-        />
-      )}
+          <Progress
+            showModal={showModal}
+            setShowModal={setShowModal}
+            student={selectedStudent}
+          />
+        )}
       </PlacementResultsContainer>
 
       {selectedStudentId && (
@@ -160,7 +161,6 @@ const AcceptedStudentList = () => {
           }}
         />
       )}
-
     </>
   );
 };

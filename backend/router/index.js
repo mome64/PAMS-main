@@ -11,8 +11,11 @@ const loginRouter = require("./login.routes");
 const criteriaRouter = require("./criteria.routes");
 const placementRouter = require("./placement.routes");
 const resultRouter = require("./result.routes");
+const progressRouter = require("./progress.routes"); // Adjust the path accordingly
 
 router.use(installRouter);
+router.use(progressRouter);
+
 router.use(studentRouter);
 router.use(adminRouter);
 router.use(companyRouter);

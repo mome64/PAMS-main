@@ -1,28 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircle, Clock, Hourglass } from "lucide-react";
+import progressService from "../../../services/progress.Service"; // Adjust the path if needed
 
 const Progress = ({ showModal, setShowModal, student }) => {
-  const [progressReports, setProgressReports] = useState([
-    {
-      title: "Week 1 - Orientation",
-      description: "Completed orientation and safety briefing.",
-      date: "2025-04-01",
-      status: "done",
-    },
-    {
-      title: "Week 2 - Assigned to Team",
-      description: "Started with software testing team.",
-      date: "2025-04-08",
-      status: "done",
-    },
-    {
-      title: "Week 3 - First Task",
-      description: "Bug fixing and test case writing.",
-      date: "2025-04-15",
-      status: "current",
-    },
-  ]);
-
+  const [progressReports, setProgressReports] = useState([]);
   const [selectedStep, setSelectedStep] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newReport, setNewReport] = useState({
@@ -31,6 +12,15 @@ const Progress = ({ showModal, setShowModal, student }) => {
     date: "",
     status: "upcoming",
   });
+
+  useEffect(() => {
+    if (student) {
+      progressService
+        .getProgressByStudentId(student)
+        .then((result) => setProgressReports([...result]))
+        .catch(console.error);
+    }
+  }, [student]);
 
   const getIcon = (status) => {
     switch (status) {
@@ -56,24 +46,33 @@ const Progress = ({ showModal, setShowModal, student }) => {
     setNewReport({ title: "", description: "", date: "", status: "upcoming" });
   };
 
-  const handleAddProgress = (e) => {
+  const handleAddProgress = async (e) => {
     e.preventDefault();
-    setProgressReports((prev) => [...prev, newReport]);
-    closeAddForm();
+    const payload = { ...newReport, student_id: student };
+    console.log(payload);
+    try {
+      const saved = await progressService.saveProgress(payload);
+      //   const saved = payload;
+      setProgressReports((prev) => [...prev, saved]);
+
+      closeAddForm();
+    } catch (err) {
+      console.error("Error saving progress:", err);
+    }
   };
 
   return (
-    <div className="absolute flex justify-center items-center top-60 inset-0 z-50 h-screen w-screen bg-opacity-60 text-black overflow-y-auto">
-      <div className="min-h-screen w-full flex flex-col items-center justify-start py-10 px-4">
-        <div className="bg-white w-full max-w-5xl p-6 rounded-xl shadow-2xl relative animate-fadeIn">
+    <div className="absolute flex justify-center items-center inset-0 z-50 bg-black  opacity-90 text-black overflow-y-auto">
+      <div className="w-full flex flex-col items-center justify-start py-10 px-4">
+        <div className="w-full max-w-5xl bg-stone-700 p-8 rounded-xl shadow-2xl relative animate-fadeIn">
           <button
             onClick={closeModal}
-            className="absolute top-3 right-4 text-gray-600 hover:text-red-500 text-2xl font-bold"
+            className="absolute top-3 right-4 text-gray-300 hover:text-red-500 text-2xl font-bold"
           >
             &times;
           </button>
 
-          <h1 className="text-3xl font-bold text-center mb-6">
+          <h1 className="text-3xl font-bold text-center text-white mb-6">
             Progress for {student?.student_first_name}{" "}
             {student?.student_last_name}
           </h1>
@@ -91,25 +90,27 @@ const Progress = ({ showModal, setShowModal, student }) => {
             {progressReports.map((step, index) => (
               <div
                 key={index}
-                className="relative flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition"
+                className="relative flex items-start gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition"
                 onClick={() => setSelectedStep(step)}
               >
                 <div className="absolute -left-[34px] top-2">
                   {getIcon(step.status)}
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">{step.title}</h2>
-                  <p className="text-gray-700">{step.description}</p>
-                  <p className="text-sm text-blue-500 mt-1">{step.date}</p>
+                  <h2 className="text-xl font-semibold text-white">
+                    {step.title}
+                  </h2>
+                  <p className="text-gray-200">{step.description}</p>
+                  <p className="text-sm text-blue-300 mt-1">{step.date}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Step Detail Modal */}
+        {/* Detail Modal */}
         {selectedStep && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full relative animate-fadeIn">
               <button
                 onClick={() => setSelectedStep(null)}
@@ -124,9 +125,9 @@ const Progress = ({ showModal, setShowModal, student }) => {
           </div>
         )}
 
-        {/* Add Progress Form */}
+        {/* Add Form Modal */}
         {showAddForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <form
               onSubmit={handleAddProgress}
               className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full relative animate-fadeIn"
