@@ -1,0 +1,121 @@
+/* General Reset */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Evaluation Container */
+.evaluation-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Title Styling */
+.evaluation-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #333333;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Result Card Styling */
+.result-card {
+  background-color: #f4f8ff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.student-name {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.info-group {
+  margin-top: 15px;
+}
+
+.info-group p {
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #555555;
+}
+
+/* Section Title Styling */
+.section-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+/* Score List Styling */
+.score-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.score-list li {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #444444;
+}
+
+.score-list strong {
+  color: #333333;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777777;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .evaluation-title {
+    font-size: 1.5rem;
+  }
+
+  .result-card {
+    padding: 15px;
+  }
+
+  .student-name {
+    font-size: 1.2rem;
+  }
+
+  .info-group p,
+  .score-list li {
+    font-size: 0.9rem;
+  }
+}
+.total-score {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #28a745; /* Green color for emphasis */
+  margin-top: 10px;
+}
