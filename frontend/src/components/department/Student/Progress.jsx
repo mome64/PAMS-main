@@ -54,11 +54,12 @@ const Progress = ({ showModal, setShowModal, student }) => {
 
           <div
             style={{ padding: 6 }}
-            className="relative  pl-6 max-h-[60vh] overflow-y-auto pr-4 space-y-6 scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-stone-700"
+            className="relative  pl-6 max-h-[60vh] font-serif capitalize overflow-y-auto pr-4 space-y-6 scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-stone-700"
           >
             {progressReports.length > 0 ? (
               progressReports.map((step, index) => (
                 <div
+                  style={{ marginTop: 5 }}
                   key={index}
                   className="relative flex items-start border gap-4 cursor-pointer hover:bg-stone-700 p-4 rounded-lg transition-colors duration-200"
                 >
@@ -68,7 +69,9 @@ const Progress = ({ showModal, setShowModal, student }) => {
                   <div>
                     <h3 className="text-lg font-semibold">{step.title}</h3>
                     <p className="text-stone-300">{step.description}</p>
-                    <p className="text-sm text-blue-400 mt-1">{step.date}</p>
+                    <p className="text-sm text-blue-400 mt-1">
+                      {new Date(step.date).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
               ))

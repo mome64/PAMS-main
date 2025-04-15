@@ -94,7 +94,7 @@ const Progress = ({ showModal, setShowModal, student }) => {
             {progressReports.map((step, index) => (
               <div
                 key={index}
-                className="relative flex capitalize border my-2 font-mono items-start gap-3 cursor-pointer hover:bg-gray-400 p-2 rounded-lg transition"
+                className="relative flex capitalize border my-2 font-mono items-start gap-3  hover:bg-gray-400 p-2 rounded-lg transition"
                 onClick={() => setSelectedStep(step)}
               >
                 <div className="absolute -left-[34px] top-2">
@@ -105,7 +105,10 @@ const Progress = ({ showModal, setShowModal, student }) => {
                     {step.title}
                   </h2>
                   <p className="text-gray-200">{step.description}</p>
-                  <p className="text-sm text-blue-300 mt-1">{step.date}</p>
+                  <p className="text-sm text-blue-300 mt-1">
+                    {" "}
+                    {new Date(step.date).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
             ))}
@@ -113,21 +116,6 @@ const Progress = ({ showModal, setShowModal, student }) => {
         </div>
 
         {/* Detail Modal */}
-        {selectedStep && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full relative animate-fadeIn">
-              <button
-                onClick={() => setSelectedStep(null)}
-                className="absolute top-2 right-3 text-gray-600 hover:text-red-500 text-xl"
-              >
-                &times;
-              </button>
-              <h2 className="text-2xl font-bold mb-2">{selectedStep.title}</h2>
-              <p className="text-gray-700">{selectedStep.description}</p>
-              <p className="text-sm text-blue-500 mt-3">{selectedStep.date}</p>
-            </div>
-          </div>
-        )}
 
         {/* Add Form Modal */}
         {showAddForm && (
