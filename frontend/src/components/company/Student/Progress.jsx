@@ -56,6 +56,7 @@ const Progress = ({ showModal, setShowModal, student }) => {
       setProgressReports((prev) => [...prev, saved]);
 
       closeAddForm();
+      setShowModal(false);
     } catch (err) {
       console.error("Error saving progress:", err);
     }
@@ -64,7 +65,10 @@ const Progress = ({ showModal, setShowModal, student }) => {
   return (
     <div className="absolute flex justify-center items-center inset-0 z-50 bg-black  opacity-90 text-black overflow-y-auto">
       <div className="w-full flex flex-col items-center justify-start py-10 px-4">
-        <div className="w-full max-w-5xl bg-stone-700 p-8 rounded-xl shadow-2xl relative animate-fadeIn">
+        <div
+          style={{ padding: 10 }}
+          className="w-full max-w-5xl bg-stone-700 p-8 rounded-xl shadow-2xl relative animate-fadeIn"
+        >
           <button
             onClick={closeModal}
             className="absolute top-3 right-4 text-gray-300 hover:text-red-500 text-2xl font-bold"
@@ -86,18 +90,18 @@ const Progress = ({ showModal, setShowModal, student }) => {
             </button>
           </div>
 
-          <div className="relative border-l-4 border-gray-300 pl-6 max-h-[60vh] overflow-y-auto pr-4 space-y-6">
+          <div className="relative pl-6 max-h-[60vh] overflow-y-auto pr-4 space-y-6">
             {progressReports.map((step, index) => (
               <div
                 key={index}
-                className="relative flex items-start gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition"
+                className="relative flex capitalize border my-2 font-mono items-start gap-3 cursor-pointer hover:bg-gray-400 p-2 rounded-lg transition"
                 onClick={() => setSelectedStep(step)}
               >
                 <div className="absolute -left-[34px] top-2">
                   {getIcon(step.status)}
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-white">
+                  <h2 className="text-xl  font-serif font-semibold text-white">
                     {step.title}
                   </h2>
                   <p className="text-gray-200">{step.description}</p>

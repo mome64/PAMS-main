@@ -9,6 +9,8 @@ import EditStudent from "./EditStudent";
 import { toast } from "react-toastify";
 import Spinner from "../../../ui/Spinner";
 import "react-toastify/dist/ReactToastify.css";
+import progressService from "../../../services/progress.Service";
+import Progress from "./Progress";
 
 const Table = styled.table`
   width: 100%;
@@ -170,6 +172,8 @@ const StudentList = () => {
   const [editingStudentId, setEditingStudentId] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deletedStudentId, setDeletedStudentId] = useState(null);
+  const [selectStudent, setSelectStudent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchStudents = async () => {
@@ -196,6 +200,10 @@ const StudentList = () => {
     }
   };
 
+  function HandleProgress(student) {
+    setSelectStudent(student);
+    setShowModal(true);
+  }
   useEffect(() => {
     fetchStudents();
   }, [userId]);
@@ -254,9 +262,15 @@ const StudentList = () => {
   const handleEdit = (studentId) => {
     setEditingStudentId(studentId);
   };
+  function handleClick() {
+    if (editingStudentId) {
+      setEditingStudentId(null);
+    }
+  }
+  console.log(editingStudentId);
 
   return (
-    <>
+    <div onClick={() => handleClick()}>
       <ConfirmationDialog
         message="Are you sure you want to delete this student?"
         onConfirm={handleConfirmDelete}
@@ -301,6 +315,7 @@ const StudentList = () => {
                 <TableHeader>Gpa</TableHeader>
                 <TableHeader>Department</TableHeader>
                 <TableHeader>Action</TableHeader>
+                <TableHeader>Progress</TableHeader>
               </TableRow>
             </TableHead>
             <tbody>
@@ -327,11 +342,23 @@ const StudentList = () => {
                       </IconButton>
                     </ActionsWrapper>
                   </TableCell>
+                  <TableCell>
+                    <button onClick={() => HandleProgress(student)}>
+                      Progress
+                    </button>
+                  </TableCell>
                 </TableRow>
               ))}
             </tbody>
           </Table>
         </>
+      )}
+      {showModal && (
+        <Progress
+          showModal={showModal}
+          setShowModal={setShowModal}
+          student={selectStudent}
+        />
       )}
       {editingStudentId && (
         <EditStudent
@@ -343,7 +370,7 @@ const StudentList = () => {
           fetchStudents={fetchStudents}
         />
       )}
-    </>
+    </div>
   );
 };
 
