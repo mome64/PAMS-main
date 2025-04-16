@@ -12,7 +12,6 @@ import studentService from "../../services/student.service";
 import adminService from "../../services/acadamic.service";
 import Spinner from "../../ui/Spinner";
 
-// Import Recharts components
 import {
   BarChart,
   Bar,
