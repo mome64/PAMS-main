@@ -12,6 +12,25 @@ import studentService from "../../services/student.service";
 import adminService from "../../services/acadamic.service";
 import Spinner from "../../ui/Spinner";
 
+// Import Recharts components
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip as PieTooltip,
+  Legend as PieLegend,
+} from "recharts";
+
 const DashboardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30.33%, 1fr));
@@ -114,6 +133,18 @@ function Dashboard() {
     fetchData();
   }, []);
 
+  // Prepare data for the chart
+  const chartData = [
+    { name: "Admins", value: numAdmins },
+    { name: "Departments", value: numDepartments },
+    { name: "Companies", value: numCompanies },
+    { name: "Students", value: numStudents },
+    { name: "Applied Students", value: numApplyStudents },
+  ];
+
+  // Pie Chart Colors
+  const COLORS = ["#0984e3", "#00b894", "#e17055", "#d63031", "#6c5ce7"];
+
   return (
     <>
       <Row type="horizontal">
@@ -134,6 +165,7 @@ function Dashboard() {
             </>
           )}
         </Box>
+
         <Box>
           <Heading as="h2">Number of Departments</Heading>
           {loadingDepartments ? (
@@ -148,6 +180,7 @@ function Dashboard() {
             </>
           )}
         </Box>
+
         <Box>
           <Heading as="h2">Number of Companies</Heading>
           {loadingCompanies ? (
@@ -161,6 +194,7 @@ function Dashboard() {
             </>
           )}
         </Box>
+
         <Box>
           <Heading as="h2">Number of Students</Heading>
           {loadingStudents ? (
@@ -175,6 +209,7 @@ function Dashboard() {
             </>
           )}
         </Box>
+
         <Box>
           <Heading as="h2">Number of Apply Students</Heading>
           {loadingApplyStudents ? (
@@ -188,6 +223,32 @@ function Dashboard() {
               <StyledLink to="/acadamic/placement">See detail</StyledLink>
             </>
           )}
+        </Box>
+
+        {/* Pie Chart */}
+        <Box style={{ gridColumn: "span 2" }}>
+          <Heading as="h2">Dashboard Overview (Pie Chart)</Heading>
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={150}
+                fill="#8884d8"
+                label
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <PieTooltip />
+              <PieLegend />
+            </PieChart>
+          </ResponsiveContainer>
         </Box>
       </DashboardContainer>
     </>
