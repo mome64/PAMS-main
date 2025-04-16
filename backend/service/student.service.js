@@ -326,6 +326,7 @@ async function getAllApplyStudents() {
         s.student_id,
         CONCAT(s.first_name, ' ', s.last_name) AS student_name,
         sa.disability,
+        s.department_id,
         sa.gender,
         s.gpa,
         GROUP_CONCAT(DISTINCT sp.company_id ORDER BY sp.preference_order) AS preferences,

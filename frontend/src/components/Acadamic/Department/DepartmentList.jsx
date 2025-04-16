@@ -200,6 +200,8 @@ const DepartmentList = () => {
               id: (page - 1) * DepartmentPerPage + index + 1,
             })
           );
+
+          
           setDepartments(departmentsData);
 
           const data = responseData.totalCount;

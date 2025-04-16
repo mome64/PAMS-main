@@ -1,7 +1,20 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import studentService from "../../../services/student.service";
+import departmentService from "../../../services/department.service";
+
+// Styled Components
+const PrintButton = styled.button`
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#2e7d32")};
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -31,6 +44,8 @@ const TableCell = styled.td`
 
 const ApplyStudentList = ({ showCompany }) => {
   const [data, setData] = useState([]);
+  const printRef = useRef();
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -39,91 +54,191 @@ const ApplyStudentList = ({ showCompany }) => {
   useEffect(() => {
     if (showCompany) {
       fetchData();
-      // Set up interval only when showCompany is true
-
       const interval = setInterval(() => {
         fetchData();
       }, 1000);
-
-      // Cleanup function to clear the interval when component unmounts or showCompany becomes false
       return () => clearInterval(interval);
     }
   }, [showCompany]);
+  const DepartmentPerPage = 20;
+  const page = 1;
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await departmentService.getAllDepartments(
+          page,
+          DepartmentPerPage
+        );
 
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        if (response.ok) {
+          const responseData = await response.json();
+
+          const departmentsData = responseData.departments?.map(
+            (department, index) => ({
+              ...department,
+              id: (page - 1) * DepartmentPerPage + index + 1,
+            })
+          );
+
+          setDepartments(departmentsData);
+        } else {
+          console.error("Failed to fetch departments:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+    fetchDepartments();
+  }, [page]);
+  console.log(departments);
   const fetchData = async () => {
     try {
       const response = await studentService.getAllApplyStudents();
-      console.log("helllo", response.students);
-      if (response) {
+      if (response?.students) {
         setData(response.students);
-      } else {
-        console.error("Failed to fetch student data");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  const handlePrint = () => {
+    if (!showCompany) {
+      alert(
+        "Printing is only allowed after generating companies for students."
+      );
+      return;
+    }
+
+    const printContent = printRef.current;
+    const printWindow = window.open("", "", "width=1000,height=800");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Student List</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 12px;
+              text-align: left;
+            }
+            th {
+              background-color: #0062;
+            }
+            tr:nth-child(even) {
+              background-color: #f9f9f9;
+            }
+            h3 {
+              margin-bottom: 20px;
+              padding: 10px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+              border-radius: 10px;
+            }
+            .no-print {
+              display: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
   return (
     <div>
-      <h3
-        style={{
-          marginBottom: "10px",
-          padding: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          borderRadius: "10px",
-        }}
-      >
-        {showCompany
-          ? `The system is successfully assigned all ${data.length} students in each available company.`
-          : `Apply to internships for a total of ${data.length} student${
-              data.length !== 1 ? "s" : ""
-            }`}
-      </h3>
+      <PrintButton onClick={handlePrint} disabled={!showCompany}>
+        Print PDF
+      </PrintButton>
 
-      <Table>
-        <TableHead>
-          <TableRow style={{ background: "#0062", color: "black" }}>
-            <TableHeader>ID</TableHeader>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Disability</TableHeader>
-            <TableHeader>Gender</TableHeader>
-            <TableHeader>GPA</TableHeader>
-            <TableHeader>Preferences</TableHeader>
-            {showCompany && <TableHeader>Company Name</TableHeader>}
-          </TableRow>
-        </TableHead>
-        <tbody>
-          {data.map((item) => (
-            <TableRow key={item.student_id}>
-              <TableCell>{item.student_id}</TableCell>
-              <TableCell>{item.name || item.student_name}</TableCell>
-              <TableCell>{item.disability ? "Yes" : "No"}</TableCell>
-              <TableCell>{item.gender}</TableCell>
-              <TableCell>{item.gpa}</TableCell>
-              <TableCell>{item.preferences}</TableCell>
-              {showCompany && (
-                <TableCell
-                  style={{
-                    color: "#456fff",
-                    textTransform: "uppercase",
-                    fontWeight: "700",
-                    margin: "-10px",
-                    background: "#FFFAA9",
-                  }}
-                >
-                  {item.company_name}
-                </TableCell>
-              )}
+      <div ref={printRef}>
+        <h3>
+          {showCompany
+            ? `The system is successfully assigned all ${data.length} students in each available company.`
+            : `Apply to internships for a total of ${data.length} student${
+                data.length !== 1 ? "s" : ""
+              }`}
+        </h3>
+
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeader>ID</TableHeader>
+              <TableHeader>Name</TableHeader>
+              <TableHeader className="no-print">Disability</TableHeader>
+              <TableHeader>Gender</TableHeader>
+              <TableHeader>GPA</TableHeader>
+              <TableHeader>Department</TableHeader>
+              <TableHeader className="no-print">Preferences</TableHeader>
+              {showCompany && <TableHeader>Company Name</TableHeader>}
             </TableRow>
-          ))}
-        </tbody>
-      </Table>
+          </TableHead>
+          <tbody>
+            {data.map((item) => {
+              const matchedDepartment = departments.find(
+                (dep) => dep.department_id === item.department_id
+              );
+
+              return (
+                <TableRow key={item.student_id}>
+                  <TableCell>{item.student_id}</TableCell>
+                  <TableCell>{item.name || item.student_name}</TableCell>
+                  <TableCell className="no-print">
+                    {item.disability ? "Yes" : "No"}
+                  </TableCell>
+                  <TableCell>{item.gender}</TableCell>
+                  <TableCell>{item.gpa}</TableCell>
+
+                  <TableCell>
+                    {matchedDepartment
+                      ? matchedDepartment.department_name
+                      : "—"}
+                  </TableCell>
+
+                  <TableCell className="no-print">{item.preferences}</TableCell>
+
+                  {showCompany && (
+                    <TableCell
+                      style={{
+                        color: "#456fff",
+                        textTransform: "uppercase",
+                        fontWeight: "700",
+                        margin: "-10px",
+                        background: "#FFFAA9",
+                      }}
+                    >
+                      {item.company_name}
+                    </TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 };
 
-// PropTypes validation
 ApplyStudentList.propTypes = {
   showCompany: PropTypes.bool.isRequired,
 };
