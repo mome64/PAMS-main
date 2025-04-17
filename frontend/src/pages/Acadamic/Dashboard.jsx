@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { MdBusiness, MdSchool } from "react-icons/md";
+import { MdBusiness, MdSchool, MdAdminPanelSettings } from "react-icons/md";
 import { FaUserGraduate } from "react-icons/fa";
-import { MdAdminPanelSettings } from "react-icons/md";
 import Heading from "../../ui/Heading";
 import Row from "../../ui/Row";
 import departmentService from "../../services/department.service";
@@ -21,14 +20,19 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import {
   PieChart,
   Pie,
   Cell,
-  Tooltip as PieTooltip,
-  Legend as PieLegend,
+  LineChart,
+  Line,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar
 } from "recharts";
+
+const COLORS = ["#0984e3", "#00cec9", "#fd79a8", "#e17055", "#6c5ce7"];
 
 const DashboardContainer = styled.div`
   display: grid;
@@ -77,6 +81,17 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
+const ChartGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+`;
+
+const ChartBox = styled(Box)`
+  flex: 1 1 calc(50% - 2rem);
+`;
+
 function Dashboard() {
   const [numDepartments, setNumDepartments] = useState(0);
   const [numCompanies, setNumCompanies] = useState(0);
@@ -93,8 +108,7 @@ function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       const departmentResponse = await departmentService.getAllDepartments();
-      const companyResponse =
-        await companyService.getAllCompaniesWithoutPagination();
+      const companyResponse = await companyService.getAllCompaniesWithoutPagination();
       const studentResponse = await studentService.getAllStudents();
       const adminResponse = await adminService.getAllAdmins();
       const applyStudentResponse = await studentService.getAllApplyStudents();
@@ -132,23 +146,20 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  // Prepare data for the chart
   const chartData = [
     { name: "Admins", value: numAdmins },
     { name: "Departments", value: numDepartments },
     { name: "Companies", value: numCompanies },
     { name: "Students", value: numStudents },
-    { name: "Applied Students", value: numApplyStudents },
+    { name: "Applied", value: numApplyStudents }
   ];
-
-  // Pie Chart Colors
-  const COLORS = ["#0984e3", "#00b894", "#e17055", "#d63031", "#6c5ce7"];
 
   return (
     <>
       <Row type="horizontal">
         <Heading as="h1">Admin Dashboard</Heading>
       </Row>
+
       <DashboardContainer>
         <Box>
           <Heading as="h2">Number of Admins</Heading>
@@ -210,7 +221,7 @@ function Dashboard() {
         </Box>
 
         <Box>
-          <Heading as="h2">Number of Apply Students</Heading>
+          <Heading as="h2">Applied Students</Heading>
           {loadingApplyStudents ? (
             <Spinner />
           ) : (
@@ -223,33 +234,74 @@ function Dashboard() {
             </>
           )}
         </Box>
+      </DashboardContainer>
 
-        {/* Pie Chart */}
-        <Box style={{ gridColumn: "span 2" }}>
-          <Heading as="h2">Dashboard Overview (Pie Chart)</Heading>
-          <ResponsiveContainer width="100%" height={400}>
+      {/* Charts Section */}
+      <ChartGrid>
+        <ChartBox>
+          <Heading as="h2">Bar Chart Overview</Heading>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#0984e3" />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartBox>
+
+        <ChartBox>
+          <Heading as="h2">Pie Chart Distribution</Heading>
+          <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
                 data={chartData}
                 dataKey="value"
                 nameKey="name"
-                outerRadius={150}
-                fill="#8884d8"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
                 label
               >
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                {chartData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <PieTooltip />
-              <PieLegend />
+              <Tooltip />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
-        </Box>
-      </DashboardContainer>
+        </ChartBox>
+
+        <ChartBox>
+          <Heading as="h2">Line Chart Trends</Heading>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke="#00cec9" />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartBox>
+
+        <ChartBox>
+          <Heading as="h2">Radar Chart Comparison</Heading>
+          <ResponsiveContainer width="100%" height={300}>
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="name" />
+              <PolarRadiusAxis />
+              <Radar name="Stats" dataKey="value" stroke="#e17055" fill="#e17055" fillOpacity={0.6} />
+              <Legend />
+            </RadarChart>
+          </ResponsiveContainer>
+        </ChartBox>
+      </ChartGrid>
     </>
   );
 }
