@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2025 at 12:55 PM
+-- Generation Time: Apr 14, 2025 at 04:36 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `internlink`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `acadamic`
+--
+
+CREATE TABLE `acadamic` (
+  `acadamic_id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `photo` varchar(255) DEFAULT 'default.jpg',
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `acadamic`
+--
+
+INSERT INTO `acadamic` (`acadamic_id`, `first_name`, `last_name`, `username`, `email`, `photo`, `password`) VALUES
+(1, 'John', 'Smith', 'acadamic.smith.acad', 'johnsmith@example.com', 'default.jpg', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m');
 
 -- --------------------------------------------------------
 
@@ -68,12 +91,12 @@ CREATE TABLE `companies` (
 --
 
 INSERT INTO `companies` (`company_id`, `company_name`, `username`, `phone_number`, `contact_email`, `location`, `industry_sector`, `accepted_student_limit`, `website`, `password`) VALUES
-(1, 'Zalatech', 'comp.zalatech', '+251912974411', 'info@zalatechs.com', 'Addis Ababa', 'Tech', 4, 'www.zalatechs.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-(2, 'Cynooxtech', 'comp.cynooxtech', '+251909772885', 'cynooxtech@gmail.com', 'Addis Ababa', 'Tech', 5, 'www.cynoox.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-(3, 'Fairfaxtech', 'comp.fairfaxtech', '+251115549172', 'info@fairfaxtechnologies.com', 'Addis Ababa', 'Tech', 3, 'www.fairfax.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-(4, 'Alphait', 'comp.alphait', '+251912254156', 'info@alphaitsolution.com', 'Addis Ababa', 'Tech', 4, 'www.alpha.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-(5, 'PeragoTech', 'comp.peragotech', '+251911231622', 'info@peragosystems.com', 'Addis Ababa', 'Tech', 3, 'www.perago.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-(10, 'kombolcha', 'comp.kombolcha', '0903169980', 'mesoudmohammed393@gmail.com', 'wello', 'It', 6, 'www.ertre.com', '$2b$10$2fmrDxaHodmb8EAKO8VLOObeo3AfMUyuG7CBbboy1KtIdN/TlUZ7O');
+(1, 'Zalatech', 'comp.zalatech', '+251912974411', 'info@zalatechs.com', 'Addis Ababa', 'Tech', 4, 'www.zalatechs.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m'),
+(2, 'Cynooxtech', 'comp.cynooxtech', '+251909772885', 'cynooxtech@gmail.com', 'Addis Ababa', 'Tech', 5, 'www.cynoox.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m'),
+(3, 'Fairfaxtech', 'comp.fairfaxtech', '+251115549172', 'info@fairfaxtechnologies.com', 'Addis Ababa', 'Tech', 3, 'www.fairfax.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m'),
+(4, 'Alphait', 'comp.alphait', '+251912254156', 'info@alphaitsolution.com', 'Addis Ababa', 'Tech', 4, 'www.alpha.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m'),
+(5, 'PeragoTech', 'comp.peragotech', '+251911231622', 'info@peragosystems.com', 'Addis Ababa', 'Tech', 3, 'www.perago.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m'),
+(10, 'kombolcha', 'comp.kombolcha', '0903169980', 'mesoudmohammed393@gmail.com', 'wello', 'It', 6, 'www.ertre.com', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m');
 
 -- --------------------------------------------------------
 
@@ -114,6 +137,27 @@ CREATE TABLE `placement_results` (
   `company_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `placement_results`
+--
+
+INSERT INTO `placement_results` (`placement_id`, `student_id`, `company_id`) VALUES
+(16, 6, 1),
+(17, 14, 1),
+(18, 15, 1),
+(19, 1, 1),
+(20, 2, 2),
+(21, 7, 2),
+(22, 8, 2),
+(23, 11, 2),
+(24, 10, 2),
+(25, 12, 3),
+(26, 4, 3),
+(27, 13, 3),
+(28, 9, 4),
+(29, 5, 4),
+(30, 3, 4);
+
 -- --------------------------------------------------------
 
 --
@@ -151,7 +195,7 @@ INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `username`, `ph
 (11, 'Teddy', 'Alemu', 'stud.teddy.al', '0998732211', 'teddyale8@gmail.com', 3.60, 'default.jpg', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2', 5),
 (12, 'Ahmed', 'Abdu', 'stud.ahmed.ab', '0988726367', 'ahamedab78@gmail.com', 3.70, 'default.jpg', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2', 3),
 (13, 'Binyam', 'Belete', 'stud.binyam.bi', '0945267278', 'binyambel82@gmail.com', 3.75, 'default.jpg', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2', 4),
-(14, 'Roza', 'Mesifi', 'stud.roza.me', '0972342691', 'rozamesfin2@gmail.com', 3.85, 'default.jpg', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2', 5),
+(14, 'Roza', 'Mesifi', 'stud.roza.me', '0972342691', 'rozamesfin2@gmail.com', 3.85, 'default.jpg', '$2a$12$LYBOuX/eHDbUfY1L7us1xe7HMGie5mJkmvMNgIRaDVoZI8AJFqQ/m', 5),
 (15, 'Betty', 'Adane', 'stud.betty.ad', '0935137412', 'bettyad12@gmail.com', 3.40, 'default.jpg', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2', 3);
 
 -- --------------------------------------------------------
@@ -218,6 +262,14 @@ CREATE TABLE `student_organizational_result` (
   `area_of_work` varchar(255) DEFAULT NULL,
   `total_hours` decimal(8,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_organizational_result`
+--
+
+INSERT INTO `student_organizational_result` (`result_id`, `student_id`, `department_id`, `company_id`, `commitment`, `courtesy`, `conduct`, `perseverance`, `teamwork`, `professional_ethics`, `creativity`, `technical_knowledge`, `efficiency`, `professional_comments`, `attendance`, `advisor_name`, `department_assigned`, `attachment_from_date`, `attachment_to_date`, `area_of_work`, `total_hours`) VALUES
+(1, 1, 1, 1, 3.00, 2.00, 2.00, 0.00, 2.00, 2.00, 1.00, 5.00, 7.00, 5.00, 3.00, 'bfdf', 'web', '2025-04-09', '2025-05-21', 'web', 600.00),
+(2, 14, 5, 1, 3.00, 1.00, 2.00, 2.00, 2.00, 2.00, 0.00, 8.00, 7.00, 5.00, 3.00, 'bfdf', 'web', '2025-04-10', '2025-05-29', 'web', 700.00);
 
 -- --------------------------------------------------------
 
@@ -297,6 +349,23 @@ INSERT INTO `student_preferences` (`apply_id`, `preference_order`, `student_id`,
 (15, 2, 15, 1),
 (15, 3, 15, 3),
 (15, 4, 15, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_progress`
+--
+
+CREATE TABLE `student_progress` (
+  `progress_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `date` date NOT NULL,
+  `status` enum('done','current','upcoming') DEFAULT 'upcoming',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -388,6 +457,13 @@ ALTER TABLE `student_preferences`
   ADD KEY `company_id` (`company_id`);
 
 --
+-- Indexes for table `student_progress`
+--
+ALTER TABLE `student_progress`
+  ADD PRIMARY KEY (`progress_id`),
+  ADD KEY `student_id` (`student_id`);
+
+--
 -- Indexes for table `weights`
 --
 ALTER TABLE `weights`
@@ -419,7 +495,7 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `placement_results`
 --
 ALTER TABLE `placement_results`
-  MODIFY `placement_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `placement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -437,7 +513,13 @@ ALTER TABLE `student_apply_form`
 -- AUTO_INCREMENT for table `student_organizational_result`
 --
 ALTER TABLE `student_organizational_result`
-  MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `student_progress`
+--
+ALTER TABLE `student_progress`
+  MODIFY `progress_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `weights`
@@ -483,6 +565,12 @@ ALTER TABLE `student_preferences`
   ADD CONSTRAINT `student_preferences_ibfk_1` FOREIGN KEY (`apply_id`) REFERENCES `student_apply_form` (`apply_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `student_preferences_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `student_apply_form` (`student_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `student_preferences_ibfk_3` FOREIGN KEY (`company_id`) REFERENCES `companies` (`company_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `student_progress`
+--
+ALTER TABLE `student_progress`
+  ADD CONSTRAINT `student_progress_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
