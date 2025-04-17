@@ -23,13 +23,14 @@ function UpdateProfile() {
 
   const fetchAdminData = async () => {
     try {
-      const response = await adminService.getAdminById(userId);
+      const response = await adminService.getAdminById(1);
 
       if (!response.ok) {
         throw new Error("Failed to fetch admin data");
       }
       const adminData = await response.json();
       const admin = adminData.data;
+      console.log(userId);
       setFormData(admin);
     } catch (error) {
       console.error("Error fetching admin data:", error);
@@ -85,7 +86,7 @@ function UpdateProfile() {
 
         // Update admin information
         const updateResponse = await adminService.updateAdmin(
-          userId,
+          1,
           formDataWithFile
         );
 

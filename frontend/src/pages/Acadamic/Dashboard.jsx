@@ -29,7 +29,7 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Radar
+  Radar,
 } from "recharts";
 
 const COLORS = ["#0984e3", "#00cec9", "#fd79a8", "#e17055", "#6c5ce7"];
@@ -108,7 +108,8 @@ function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       const departmentResponse = await departmentService.getAllDepartments();
-      const companyResponse = await companyService.getAllCompaniesWithoutPagination();
+      const companyResponse =
+        await companyService.getAllCompaniesWithoutPagination();
       const studentResponse = await studentService.getAllStudents();
       const adminResponse = await adminService.getAllAdmins();
       const applyStudentResponse = await studentService.getAllApplyStudents();
@@ -151,13 +152,13 @@ function Dashboard() {
     { name: "Departments", value: numDepartments },
     { name: "Companies", value: numCompanies },
     { name: "Students", value: numStudents },
-    { name: "Applied", value: numApplyStudents }
+    { name: "Applied", value: numApplyStudents },
   ];
 
   return (
     <>
       <Row type="horizontal">
-        <Heading as="h1">Admin Dashboard</Heading>
+        <Heading as="h1">Collage Dashboard</Heading>
       </Row>
 
       <DashboardContainer>
@@ -266,7 +267,10 @@ function Dashboard() {
                 label
               >
                 {chartData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -296,7 +300,13 @@ function Dashboard() {
               <PolarGrid />
               <PolarAngleAxis dataKey="name" />
               <PolarRadiusAxis />
-              <Radar name="Stats" dataKey="value" stroke="#e17055" fill="#e17055" fillOpacity={0.6} />
+              <Radar
+                name="Stats"
+                dataKey="value"
+                stroke="#e17055"
+                fill="#e17055"
+                fillOpacity={0.6}
+              />
               <Legend />
             </RadarChart>
           </ResponsiveContainer>

@@ -40,7 +40,7 @@ function UpdateProfile() {
   useEffect(() => {
     fetchAdminData();
   }, [userId]);
-
+  console.log(userId);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({

@@ -76,6 +76,12 @@ function MainNav() {
             <span>Algorithm</span>
           </StyledNavLink>
         </li>
+        <li>
+          <StyledNavLink to="/acadamic/Profile">
+            <HiOutlineUser />
+            <span>Profile</span>
+          </StyledNavLink>
+        </li>
       </NavList>
     </nav>
   );
