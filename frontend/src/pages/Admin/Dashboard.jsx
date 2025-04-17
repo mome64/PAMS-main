@@ -11,6 +11,28 @@ import companyService from "../../services/company.service";
 import studentService from "../../services/student.service";
 import adminService from "../../services/admin.service";
 import Spinner from "../../ui/Spinner";
+import { Bar, Pie } from "react-chartjs-2"; // Import Pie Chart
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement, // For Pie chart
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register necessary components for the chart
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement, // Register ArcElement for Pie chart
+  Title,
+  Tooltip,
+  Legend
+);
 
 const DashboardContainer = styled.div`
   display: grid;
@@ -114,6 +136,43 @@ function Dashboard() {
     fetchData();
   }, []);
 
+  // Bar Chart Data
+  const chartData = {
+    labels: ["Departments", "Companies", "Students", "Admins"],
+    datasets: [
+      {
+        label: "Count",
+        data: [numDepartments, numCompanies, numStudents, numAdmins],
+        backgroundColor: "#0984e3", // Blue color for the bars
+        borderColor: "#0984e3", // Border color
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Pie Chart Data (using the same data)
+  const pieChartData = {
+    labels: ["Departments", "Companies", "Students", "Admins"],
+    datasets: [
+      {
+        data: [numDepartments, numCompanies, numStudents, numAdmins],
+        backgroundColor: [
+          "#ff5733", // Red for Departments
+          "#33b5ff", // Blue for Companies
+          "#ffeb3b", // Yellow for Students
+          "#8bc34a", // Green for Admins
+        ],
+        borderColor: [
+          "#ff5733", // Red for Departments
+          "#33b5ff", // Blue for Companies
+          "#ffeb3b", // Yellow for Students
+          "#8bc34a", // Green for Admins
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <>
       <Row type="horizontal">
@@ -190,6 +249,25 @@ function Dashboard() {
           )}
         </Box>
       </DashboardContainer>
+
+      {/* Charts Section */}
+      <div className="mt-10">
+        <Heading as="h2" className="text-xl font-semibold mb-6">
+          Dashboard Data Overview
+        </Heading>
+        <div className="flex justify-between gap-10 place-items-center">
+          {/* Bar Chart */}
+          <div className="flex-1 min-w-[300px]">
+            <Bar data={chartData} options={{ responsive: true }} />
+          </div>
+
+          {/* Pie Chart */}
+          <div className="flex-1 min-w-[250px]">
+           
+            <Pie data={pieChartData} options={{ responsive: true }} />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
