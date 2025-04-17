@@ -20,6 +20,8 @@
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.9",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.488.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
