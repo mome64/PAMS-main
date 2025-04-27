@@ -11,6 +11,7 @@ import Spinner from "../../../ui/Spinner";
 import "react-toastify/dist/ReactToastify.css";
 import progressService from "../../../services/progress.Service";
 import Progress from "./Progress";
+import Payment from "../../../pages/departments/Payment";
 
 const Table = styled.table`
   width: 100%;
@@ -267,7 +268,6 @@ const StudentList = () => {
       setEditingStudentId(null);
     }
   }
-  console.log(editingStudentId);
 
   return (
     <div onClick={() => handleClick()}>
@@ -313,9 +313,10 @@ const StudentList = () => {
                 <TableHeader>Phone Number</TableHeader>
                 <TableHeader>Contact Email</TableHeader>
                 <TableHeader>Gpa</TableHeader>
-                <TableHeader>Department</TableHeader>
+
                 <TableHeader>Action</TableHeader>
                 <TableHeader>Progress</TableHeader>
+                <TableHeader>Transaction</TableHeader>
               </TableRow>
             </TableHead>
             <tbody>
@@ -327,7 +328,7 @@ const StudentList = () => {
                   <TableCell>{student.phone_number}</TableCell>
                   <TableCell>{student.contact_email}</TableCell>
                   <TableCell>{student.gpa}</TableCell>
-                  <TableCell>{student.department_id}</TableCell>
+
                   <TableCell>
                     <ActionsWrapper>
                       <IconButton
@@ -346,6 +347,9 @@ const StudentList = () => {
                     <button onClick={() => HandleProgress(student)}>
                       Progress
                     </button>
+                  </TableCell>
+                  <TableCell>
+                    <Payment student={student} />
                   </TableCell>
                 </TableRow>
               ))}

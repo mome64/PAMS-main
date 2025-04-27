@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@heroicons/react": "^2.2.0",
     "@mui/material": "^5.15.13",
     "@mui/x-data-grid": "^6.19.8",
     "@mui/x-data-grid-generator": "^6.19.6",
