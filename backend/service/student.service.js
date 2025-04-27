@@ -444,9 +444,14 @@ async function deleteAllPlacementResults() {
   try {
     // Write the SQL query to delete all records from the "placement_results" table
     const sql = `DELETE FROM placement_results`;
-
+    const sql2 = `DELETE FROM transactions`;
+    const sql3 = `DELETE FROM student_progress`;
+    const sql4 = `DELETE FROM student_organizational_result`;
     // Execute the query
     await query(sql);
+    await query(sql2);
+    await query(sql3);
+    await query(sql4);
 
     // Return a success message or handle the result as needed
     return {
