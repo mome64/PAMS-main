@@ -190,7 +190,7 @@ const TransactionForm = () => {
         </button>
       </div>
 
-      <table className="w-full border table-auto">
+      <table className="w-full border table-auto space-y-5">
         <thead className="bg-gray-100 text-black ">
           <tr>
             <th className="text-left p-2">#</th>
@@ -201,10 +201,10 @@ const TransactionForm = () => {
         </thead>
         <tbody>
           {transactions.map((tx, index) => (
-            <tr key={index} className="border-b border">
+            <tr key={index} className="border-b border-l-0 border ">
               <td className="p-2">{index + 1}</td>
               <td className="p-2">{tx.department}</td>
-              <td className="p-2">{parseInt(tx.amount)} ETB</td>
+              <td className="p-2">{parseInt(tx.amount)}ETB</td>
               <td className="p-2 flex gap-2">
                 <button
                   onClick={() => openEditModal(index)}
