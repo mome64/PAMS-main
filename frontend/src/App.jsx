@@ -58,6 +58,7 @@ import CompanyDashboard from "./pages/company/Dashboard";
 import CompanyStudent from "./pages/company/Students";
 import CompanyAppLayout from "./ui/Company/CompanyAppLayout";
 import DepartmentTransactionForm from "./pages/Acadamic/DepartmentTransactionForm";
+import StudentProgress from "./pages/company/StudentProgress";
 
 function App() {
   return (
@@ -356,6 +357,14 @@ function App() {
               element={
                 <PrivateAuthRoute roles={["Company"]}>
                   <CompanyDashboard />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
+              path="company/progress"
+              element={
+                <PrivateAuthRoute roles={["Company"]}>
+                  <StudentProgress />
                 </PrivateAuthRoute>
               }
             />

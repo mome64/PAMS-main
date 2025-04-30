@@ -47,7 +47,7 @@ const buttonStyle = {
   transition: "background-color 0.3s ease",
 };
 
-const AcceptedStudentList = () => {
+const AcceptedStudntProgress = () => {
   const [placementResults, setPlacementResults] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -89,12 +89,10 @@ const AcceptedStudentList = () => {
             <TableRow>
               <TableHeaderCell>ID</TableHeaderCell>
               <TableHeaderCell>Student Name</TableHeaderCell>
-              <TableHeaderCell>Gender</TableHeaderCell>
-              <TableHeaderCell>Disability</TableHeaderCell>
-              <TableHeaderCell>Department Name</TableHeaderCell>
-              <TableHeaderCell>Company Name</TableHeaderCell>
 
-              <TableHeaderCell>Final Result</TableHeaderCell>
+              <TableHeaderCell>Department Name</TableHeaderCell>
+
+              <TableHeaderCell>Progress</TableHeaderCell>
             </TableRow>
           </thead>
           <tbody>
@@ -104,23 +102,21 @@ const AcceptedStudentList = () => {
                 <TableCell>
                   {result.student_first_name} {result.student_last_name}
                 </TableCell>
-                <TableCell>{result.gender}</TableCell>
-                <TableCell>{result.disability === 1 ? "yes" : "no"}</TableCell>
+
                 <TableCell>{result.department_name}</TableCell>
-                <TableCell style={{ color: "red" }}>
-                  {result.company_name}
-                </TableCell>
 
                 <TableCell>
                   <button
-                    style={buttonStyle}
-                    onClick={() => {
-                      setSelectedStudentId(result.student_id);
-                      setSelectedCompanyId(result.company_id);
-                      setSelectedDepartmentId(result.department_id);
-                    }}
+                    className="bg-stone-300 p-2 border-none outline-none rounded text-black"
+                    onClick={() =>
+                      openProgressModal({
+                        student_first_name: result.student_first_name,
+                        student_last_name: result.student_last_name,
+                        student_id: result.student_id,
+                      })
+                    }
                   >
-                    Send
+                    Progress
                   </button>
                 </TableCell>
               </TableRow>
@@ -152,4 +148,4 @@ const AcceptedStudentList = () => {
   );
 };
 
-export default AcceptedStudentList;
+export default AcceptedStudntProgress;

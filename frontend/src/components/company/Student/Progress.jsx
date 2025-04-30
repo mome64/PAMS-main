@@ -16,7 +16,7 @@ const Progress = ({ showModal, setShowModal, student }) => {
   useEffect(() => {
     if (student) {
       progressService
-        .getProgressByStudentId(student)
+        .getProgressByStudentId(student.student_id)
         .then((result) => setProgressReports([...result]))
         .catch(console.error);
     }

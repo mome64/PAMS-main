@@ -69,6 +69,12 @@ function CompanyMainNav() {
             <span>Student</span>
           </StyledNavLink>
         </li>
+        <li>
+          <StyledNavLink to="/company/progress">
+            <HiOutlineCalendar />
+            <span>Pogress</span>
+          </StyledNavLink>
+        </li>
       </NavList>
     </nav>
   );
