@@ -150,7 +150,7 @@ async function sendPaymentSuccessEmail(email, firstName, amount) {
 async function fetchAllTransactions() {
   try {
     const transactions = await query("SELECT * FROM transactions");
-    console.log(transactions);
+
     return {
       status: true,
       message: "Transactions fetched successfully",

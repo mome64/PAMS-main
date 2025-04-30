@@ -7,6 +7,7 @@ function Payment({ student }) {
   const txRef = `${student.username}_${student.phone_number}_${Date.now()}`;
 
   const [transactions, setTransactions] = useState([]);
+  const [depAmount, setDepamount] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasPaid, setHasPaid] = useState(false);
@@ -47,41 +48,59 @@ function Payment({ student }) {
     };
     fetchDepartments();
   }, [page]);
-  console.log(departments);
+
   useEffect(() => {
     fetchTransactions();
   }, []);
+
   useEffect(() => {
     if (departments.length > 0) {
       adjustAmountBasedOnDepartment();
     }
   }, [departments]);
 
-  const adjustAmountBasedOnDepartment = () => {
-    // Compare the student's department ID with the fetched department ID
-    const studentDepartment = student.department_id; // Assuming student object has department_id
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/transactions");
+        const data = await res.json();
 
+        if (res.ok) {
+          setDepamount(data.data); // assuming your backend returns { data: [...] }
+          console.log(data.data);
+        } else {
+          console.error("Failed to load transactions:", data.error);
+        }
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  const adjustAmountBasedOnDepartment = () => {
+    const studentDepartmentId = student.department_id;
+
+    // Find the matching department name from departments list
     const department = departments.find(
-      (dept) => dept.id === studentDepartment
+      (dept) => dept.id === studentDepartmentId
     );
 
-    if (department) {
-      // If found, adjust the amount based on department
-      if (
-        department.name === "InfoSystem" ||
-        department.name === "InfoTechnology"
-      ) {
-        setPaymentAmount(3500); // Adjust the amount for these departments
-      } else if (department.name === "CompScience") {
-        setPaymentAmount(3200); // Adjust the amount for Computer Science department
-      } else if (department.name === "CompScienceand") {
-        setPaymentAmount(3300); // Adjust the amount for CompScienceand department
-      } else {
-        setPaymentAmount(3000); // Default price for all other departments
-      }
+    if (!department) return;
+
+    // Find the matching transaction by department name
+    const transaction = depAmount.find(
+      (tx) => tx.department === department.department_name
+    );
+
+    if (transaction) {
+      setPaymentAmount(parseInt(transaction.amount));
+    } else {
+      setPaymentAmount(0); // Or default/fallback amount
     }
   };
-
+  console.log(payAmount);
   async function fetchTransactions() {
     try {
       const response = await axios.get(
@@ -137,7 +156,11 @@ function Payment({ student }) {
           <input type="hidden" name="email" value={student.contact_email} />
           <input type="hidden" name="first_name" value={student.first_name} />
           <input type="hidden" name="last_name" value={student.last_name} />
-          <input type="hidden" name="title" value="Chapa Checkout" />
+          <input
+            type="hidden"
+            name="title"
+            value={`Chapa Checkout ${payAmount}ETB`}
+          />
           <input
             type="hidden"
             name="description"

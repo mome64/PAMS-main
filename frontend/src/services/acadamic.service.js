@@ -13,17 +13,14 @@ const createAdmin = async (formData) => {
 };
 
 // A function to send a get request to get an admin by ID
-const getAdminById = async (userId) => {
+const getAdminById = async () => {
   const requestOptions = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   };
-  const response = await fetch(
-    `${api_url}/api/acadamic/${userId}`,
-    requestOptions
-  );
+  const response = await fetch(`${api_url}/api/acadamic/${1}`, requestOptions);
   return response;
 };
 

@@ -13,7 +13,7 @@ const placementRouter = require("./placement.routes");
 const resultRouter = require("./result.routes");
 const progressRouter = require("./progress.routes"); // Adjust the path accordingly
 const PaymentRouter = require("./payment.routes");
-
+const transaction = require("./transaction.routes");
 router.use(installRouter);
 router.use(progressRouter);
 router.use(PaymentRouter);
@@ -26,5 +26,6 @@ router.use(criteriaRouter);
 router.use(placementRouter);
 router.use(resultRouter);
 router.use(acadamicRouter);
+router.use(transaction);
 
 module.exports = router;

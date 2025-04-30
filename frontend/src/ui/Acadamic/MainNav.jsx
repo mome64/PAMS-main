@@ -77,6 +77,12 @@ function MainNav() {
           </StyledNavLink>
         </li>
         <li>
+          <StyledNavLink to="acadamic/DepartmentPayAmount">
+            <HiOutlineCog />
+            <span>DepartmentPay</span>
+          </StyledNavLink>
+        </li>
+        <li>
           <StyledNavLink to="/acadamic/Profile">
             <HiOutlineUser />
             <span>Profile</span>

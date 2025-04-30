@@ -148,7 +148,6 @@ function Dashboard() {
   }, []);
 
   const chartData = [
-    { name: "Admins", value: numAdmins },
     { name: "Departments", value: numDepartments },
     { name: "Companies", value: numCompanies },
     { name: "Students", value: numStudents },
@@ -162,21 +161,6 @@ function Dashboard() {
       </Row>
 
       <DashboardContainer>
-        <Box>
-          <Heading as="h2">Number of Admins</Heading>
-          {loadingAdmins ? (
-            <Spinner />
-          ) : (
-            <>
-              <h3>{numAdmins}</h3>
-              <IconContainer>
-                <MdAdminPanelSettings size={24} color="#00b494" />
-              </IconContainer>
-              <StyledLink>Admins</StyledLink>
-            </>
-          )}
-        </Box>
-
         <Box>
           <Heading as="h2">Number of Departments</Heading>
           {loadingDepartments ? (

@@ -57,6 +57,7 @@ import EvaluationResult from "./components/department/Result/EvaluationResult";
 import CompanyDashboard from "./pages/company/Dashboard";
 import CompanyStudent from "./pages/company/Students";
 import CompanyAppLayout from "./ui/Company/CompanyAppLayout";
+import DepartmentTransactionForm from "./pages/Acadamic/DepartmentTransactionForm";
 
 function App() {
   return (
@@ -182,6 +183,14 @@ function App() {
               element={
                 <PrivateAuthRoute roles={["acadamic"]}>
                   <Generatea />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
+              path="acadamic/DepartmentPayAmount"
+              element={
+                <PrivateAuthRoute roles={["acadamic"]}>
+                  <DepartmentTransactionForm />
                 </PrivateAuthRoute>
               }
             />
