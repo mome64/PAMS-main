@@ -92,7 +92,7 @@ const ApplyStudentList = ({ showCompany }) => {
     };
     fetchDepartments();
   }, [page]);
-  console.log(departments);
+
   const fetchData = async () => {
     try {
       const response = await studentService.getAllApplyStudents();
@@ -184,7 +184,7 @@ const ApplyStudentList = ({ showCompany }) => {
             <TableRow>
               <TableHeader>ID</TableHeader>
               <TableHeader>Name</TableHeader>
-              <TableHeader className="no-print">Disability</TableHeader>
+
               <TableHeader>Gender</TableHeader>
               <TableHeader>GPA</TableHeader>
               <TableHeader>Department</TableHeader>
@@ -202,9 +202,7 @@ const ApplyStudentList = ({ showCompany }) => {
                 <TableRow key={item.student_id}>
                   <TableCell>{item.student_id}</TableCell>
                   <TableCell>{item.name || item.student_name}</TableCell>
-                  <TableCell className="no-print">
-                    {item.disability ? "Yes" : "No"}
-                  </TableCell>
+
                   <TableCell>{item.gender}</TableCell>
                   <TableCell>{item.gpa}</TableCell>
 

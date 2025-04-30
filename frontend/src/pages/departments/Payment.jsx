@@ -100,7 +100,7 @@ function Payment({ student }) {
       setPaymentAmount(0); // Or default/fallback amount
     }
   };
-  console.log(payAmount);
+
   async function fetchTransactions() {
     try {
       const response = await axios.get(
