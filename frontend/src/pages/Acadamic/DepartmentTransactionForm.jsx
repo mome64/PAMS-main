@@ -204,7 +204,7 @@ const TransactionForm = () => {
             <tr key={index} className="border-b border">
               <td className="p-2">{index + 1}</td>
               <td className="p-2">{tx.department}</td>
-              <td className="p-2">{tx.amount}ETB</td>
+              <td className="p-2">{parseInt(tx.amount)} ETB</td>
               <td className="p-2 flex gap-2">
                 <button
                   onClick={() => openEditModal(index)}
