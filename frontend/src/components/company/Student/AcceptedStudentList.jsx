@@ -74,7 +74,7 @@ const AcceptedStudentList = () => {
   }, [userId]);
   // console.log(selectedStudentId);
   const openProgressModal = (student) => {
-    setSelectedStudent(student.student_id);
+    setSelectedStudent(student);
     // console.log(selectedStudent);
     setShowModal(true);
   };

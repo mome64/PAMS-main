@@ -48,7 +48,7 @@ const Progress = ({ showModal, setShowModal, student }) => {
 
   const handleAddProgress = async (e) => {
     e.preventDefault();
-    const payload = { ...newReport, student_id: student };
+    const payload = { ...newReport, student_id: student.student_id };
     console.log(payload);
     try {
       const saved = await progressService.saveProgress(payload);
