@@ -3,44 +3,46 @@ const multer = require("multer");
 
 async function createAdmin(req, res, next) {
   try {
-    // Check if all required fields exist in req.body
-    const { first_name, last_name, email, photo, password } = req.body;
+    const { full_name, email, phone_number, location, college_name, password } =
+      req.body;
 
-    // Generate the username automatically
-    const username = `acadamic.${first_name.toLowerCase()}.${last_name
-      .slice(0, 2)
-      .toLowerCase()}`;
+    // Auto-generate username
+    const username = `acadamic.${full_name.toLowerCase().replace(/\s+/g, "")}`;
 
-    // Check if admin username already exists
+    // Optional: default photo
+    const photo = req.body.photo || "default.jpg";
+
+    // Check if username already exists
     const adminExists = await adminService.checkIfAdminExists(username);
-
     if (adminExists) {
-      return res.status(400).json({
-        error: "This acadamic username already exists!",
-      });
+      return res
+        .status(400)
+        .json({ error: "This acadamic username already exists!" });
     }
 
-    // Create new admin
+    // Create new acadamic user
     const adminId = await adminService.createAdmin({
-      first_name,
-      last_name,
+      full_name,
+      username,
       email,
-      photo,
+      phone_number,
+      location,
+      college_name,
       password,
+      photo,
     });
 
     return res.status(200).json({
       status: true,
-      message: "acadamic created successfully",
+      message: "Acadamic created successfully",
       adminId,
     });
   } catch (error) {
-    console.error("Error creating admin:", error);
-    return res.status(500).json({
-      error: "Internal server error",
-    });
+    console.error("Error creating acadamic:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
+
 async function getAdminById(req, res, next) {
   try {
     // Extract admin ID from request parameters
@@ -221,8 +223,32 @@ async function getAdminPhoto(req, res, next) {
     });
   }
 }
+async function deleteAcademic(req, res, next) {
+  console.log(req.params.id);
+  try {
+    const academicId = req.params.id;
+    const deleted = await adminService.deleteAcademic(academicId);
+
+    if (!deleted) {
+      return res.status(404).json({
+        error: "Academic record not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Academic record deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting academic record:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+}
 
 module.exports = {
+  deleteAcademic,
   createAdmin,
   getAdminById,
   getAllAdmins,

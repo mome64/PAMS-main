@@ -16,7 +16,7 @@ async function sendEmail(name, email, username, password) {
     const mailOptions = {
       from: "bamsib744@gmail.com",
       to: email,
-      subject: "Welcome to Our Company",
+      subject: "Welcome to Our System",
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; border-radius: 10px; width: 80%; margin: 0 auto;">
           <h1 style="color: #333;  margin-bottom: 20px;">Welcome to Our System!</h1>

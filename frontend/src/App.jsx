@@ -60,6 +60,7 @@ import CompanyAppLayout from "./ui/Company/CompanyAppLayout";
 import DepartmentTransactionForm from "./pages/Acadamic/DepartmentTransactionForm";
 import StudentProgress from "./pages/company/StudentProgress";
 import StudentList from "./components/Acadamic/ApplyStudentList/StudentList";
+import Collage from "./pages/Admin/Collage";
 
 function App() {
   return (
@@ -91,6 +92,14 @@ function App() {
               element={
                 <PrivateAuthRoute roles={["Admin"]}>
                   <AdminUser />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
+              path="admin/collage"
+              element={
+                <PrivateAuthRoute roles={["Admin"]}>
+                  <Collage />
                 </PrivateAuthRoute>
               }
             />

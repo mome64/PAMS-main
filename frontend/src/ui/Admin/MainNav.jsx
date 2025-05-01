@@ -64,6 +64,13 @@ function MainNav() {
           </StyledNavLink>
         </li>
         <li>
+          <StyledNavLink to="/admin/Collage">
+            <MdDashboard />
+            <span>Collage</span>
+          </StyledNavLink>
+        </li>
+
+        <li>
           <StyledNavLink to="/admin/department">
             <HiOutlineCalendar />
             <span>Department</span>

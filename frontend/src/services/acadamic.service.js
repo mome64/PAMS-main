@@ -81,8 +81,19 @@ const getAdminPhotoById = async (adminId) => {
   return response;
 };
 
+const getDeleteAcademic = async (id) => {
+  console.log("iddddddd", id);
+  const requestOptions = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  };
+  const response = await fetch(`${api_url}/api/acadamic/${id}`, requestOptions);
+  return response;
+};
+
 // Export all the functions
 const adminService = {
+  getDeleteAcademic,
   createAdmin,
   getAdminById,
   getAllAdmins,

@@ -1,6 +1,7 @@
 // Import necessary dependencies
 const { query } = require("../config/db.config");
 const bcrypt = require("bcrypt");
+const { sendEmail } = require("../sendEmail");
 
 // Function to check if the admin exists in the database
 async function checkIfAdminExists(username) {
@@ -12,10 +13,10 @@ async function checkIfAdminExists(username) {
 // Function to create a new admin
 async function createAdmin(admin) {
   try {
-    // Construct the username as "admin_firstname_firstTwoLettersOfLastName"
-    const username = `acadamic.${admin.first_name.toLowerCase()}.${admin.last_name
-      .slice(0, 2)
-      .toLowerCase()}`;
+    // Construct the username as "acadamic_firstname_firstTwoLettersOfLastName"
+    const username = `acadamic.${admin.full_name
+      .toLowerCase()
+      .replace(/\s+/g, "")}`;
 
     // Hash the password before storing it
     const hashedPassword = await bcrypt.hash(admin.password, 10);
@@ -26,32 +27,51 @@ async function createAdmin(admin) {
       throw new Error("Acadamic already exists.");
     }
 
-    // Insert admin details into the admins table, including the default photo path
+    // Insert admin details into the acadamic table, including phone number, location, and college name
     const insertAdminSql = `
-        INSERT INTO acadamic (
-          first_name,
-          last_name,
-          username,
-          email,
-          photo,
-          password
-        ) VALUES (?, ?, ?, ?, ?, ?)
-      `;
+      INSERT INTO acadamic (
+        full_name,
+        username,
+        email,
+        phone_number,
+        location,
+        college_name,
+        photo,
+        password
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
     const defaultPhotoPath = "default.jpg";
     const result = await query(insertAdminSql, [
-      admin.first_name,
-      admin.last_name,
+      admin.full_name,
       username,
       admin.email,
+      admin.phone_number,
+      admin.location,
+      admin.college_name,
       defaultPhotoPath,
       hashedPassword,
     ]);
     const adminId = result.insertId;
-
+    await sendEmail(admin.full_name, admin.email, username, admin.password);
     return adminId;
   } catch (error) {
     console.error("Error creating acadamic:", error.message);
     throw new Error("Failed to create acadamic");
+  }
+}
+async function deleteAcademic(academicId) {
+  try {
+    // Check if academicId is undefined
+    if (academicId === undefined) {
+      throw new Error("Academic ID is undefined");
+    }
+
+    const deleteSql = "DELETE FROM acadamic WHERE acadamic_id = ?";
+    const result = await query(deleteSql, [academicId]);
+    return result.affectedRows > 0;
+  } catch (error) {
+    console.error("Error deleting academic:", error.message);
+    throw new Error("Failed to delete academic");
   }
 }
 
@@ -173,7 +193,7 @@ async function getAdminPhoto(adminId) {
     const admin = await getAdminById(adminId);
 
     // Return admin's photo filename
-    return admin.photo;
+    return admin?.photo;
   } catch (error) {
     console.error("Error getting admin photo:", error);
     throw new Error("Failed to get admin photo");
@@ -181,6 +201,7 @@ async function getAdminPhoto(adminId) {
 }
 
 module.exports = {
+  deleteAcademic,
   checkIfAdminExists,
   getAdminById,
   createAdmin,

@@ -102,3 +102,29 @@ export const StudentForm = [
     autoComplete: "off",
   },
 ];
+export const AcademicForm = [
+  {
+    id: "full_name",
+    label: "Full Name",
+    type: "text",
+    autoComplete: "name",
+  },
+  {
+    id: "email",
+    label: "Email",
+    type: "email",
+    autoComplete: "email",
+  },
+  {
+    id: "phone",
+    label: "Phone Number",
+    type: "tel",
+    autoComplete: "tel",
+  },
+  {
+    id: "role",
+    label: "Role",
+    type: "text",
+    autoComplete: "organization-title",
+  },
+];

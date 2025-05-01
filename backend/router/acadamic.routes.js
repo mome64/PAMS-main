@@ -6,6 +6,8 @@ const adminController = require("../controller/acadamic.controller");
 router.post("/api/acadamic", adminController.createAdmin);
 router.get("/api/acadamic", adminController.getAllAdmins);
 router.get("/api/acadamic/:id", adminController.getAdminById);
+router.delete("/api/acadamic/:id", adminController.deleteAcademic);
+
 
 router.patch(
   "/api/acadamic/:id",
