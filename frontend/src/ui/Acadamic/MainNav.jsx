@@ -2,12 +2,14 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import {
-  HiOutlineCalendar,
-  HiOutlineCog,
-  HiOutlineHome,
+  HiOutlineAcademicCap,
+  HiOutlineCurrencyDollar,
+  HiOutlineOfficeBuilding,
   HiOutlineUser,
 } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboardCustomize } from "react-icons/md";
+import { FaProjectDiagram } from "react-icons/fa";
+import { GiGraduateCap } from "react-icons/gi";
 
 const NavList = styled.ul`
   display: flex;
@@ -28,7 +30,6 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -59,26 +60,31 @@ function MainNav() {
       <NavList>
         <li>
           <StyledNavLink to="/acadamic/dashboard">
-            <MdDashboard />
+            <MdDashboardCustomize />
             <span>Dashboard</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/acadamic/department">
-            <HiOutlineCalendar />
+            <HiOutlineOfficeBuilding />
             <span>Department</span>
           </StyledNavLink>
         </li>
-
         <li>
           <StyledNavLink to="/acadamic/placement">
-            <HiOutlineCog />
-            <span>Algorithm</span>
+            <FaProjectDiagram />
+            <span>Assign List</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to="/acadamic/student">
+            <GiGraduateCap />
+            <span>Student</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="acadamic/DepartmentPayAmount">
-            <HiOutlineCog />
+            <HiOutlineCurrencyDollar />
             <span>DepartmentPay</span>
           </StyledNavLink>
         </li>

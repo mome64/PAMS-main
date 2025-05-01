@@ -59,6 +59,7 @@ import CompanyStudent from "./pages/company/Students";
 import CompanyAppLayout from "./ui/Company/CompanyAppLayout";
 import DepartmentTransactionForm from "./pages/Acadamic/DepartmentTransactionForm";
 import StudentProgress from "./pages/company/StudentProgress";
+import StudentList from "./components/Acadamic/ApplyStudentList/StudentList";
 
 function App() {
   return (
@@ -127,7 +128,7 @@ function App() {
               }
             />
             <Route
-              path="admin/Profile"
+              path="admin/account"
               element={
                 <PrivateAuthRoute roles={["Admin"]}>
                   <Account />
@@ -167,6 +168,14 @@ function App() {
               element={
                 <PrivateAuthRoute roles={["acadamic"]}>
                   <AcadamicCompany />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
+              path="acadamic/student"
+              element={
+                <PrivateAuthRoute roles={["acadamic"]}>
+                  <StudentList />
                 </PrivateAuthRoute>
               }
             />

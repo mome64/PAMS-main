@@ -63,7 +63,18 @@ function MainNav() {
             <span>Dashboard</span>
           </StyledNavLink>
         </li>
-
+        <li>
+          <StyledNavLink to="/admin/department">
+            <HiOutlineCalendar />
+            <span>Department</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to="/admin/company">
+            <HiOutlineHome />
+            <span>Company</span>
+          </StyledNavLink>
+        </li>
         <li>
           <StyledNavLink to="/admin/user">
             <HiOutlineUser />
@@ -72,7 +83,7 @@ function MainNav() {
         </li>
 
         <li>
-          <StyledNavLink to="/admin/Profile">
+          <StyledNavLink to="/admin/account">
             <HiOutlineUser />
             <span>Profile</span>
           </StyledNavLink>

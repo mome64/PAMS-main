@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Check, Lock } from "lucide-react";
 import departmentService from "../../services/department.service";
 
-function Payment({ student }) {
+function Payment({ student, disabled }) {
   const txRef = `${student.username}_${student.phone_number}_${Date.now()}`;
 
   const [transactions, setTransactions] = useState([]);
@@ -67,7 +67,6 @@ function Payment({ student }) {
 
         if (res.ok) {
           setDepamount(data.data); // assuming your backend returns { data: [...] }
-          console.log(data.data);
         } else {
           console.error("Failed to load transactions:", data.error);
         }
@@ -182,18 +181,8 @@ function Payment({ student }) {
             value="http://localhost:5173/department/student"
           />
           <input type="hidden" name="meta[title]" value="Student Practical" />
-          <button
-            type="submit"
-            disabled={hasPaid}
-            style={{ borderRadius: 12, paddingLeft: 12, paddingRight: 12 }}
-            className={`px-8 py-2   font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 
-    ${
-      hasPaid
-        ? " text-gray-500 cursor-not-allowed"
-        : "bg-gradient-to-r   from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white focus:ring-purple-400 shadow-md hover:shadow-lg"
-    }`}
-          >
-            {hasPaid ? (
+          {disabled ? (
+            hasPaid ? (
               <p className="flex place-items-center">
                 {" "}
                 <Check className="w-9  h-8 mr-5 " /> Paid{" "}
@@ -202,8 +191,31 @@ function Payment({ student }) {
               <p className="flex place-items-center">
                 <Lock className="w-9 h-8 mr-5" /> Pay{" "}
               </p>
-            )}
-          </button>
+            )
+          ) : (
+            <button
+              type="text"
+              disabled={hasPaid}
+              style={{ borderRadius: 12, paddingLeft: 12, paddingRight: 12 }}
+              className={`px-8 py-2  font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 
+    ${
+      hasPaid
+        ? " text-gray-500 cursor-not-allowed"
+        : "bg-gradient-to-r   from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white focus:ring-purple-400 shadow-md hover:shadow-lg"
+    }`}
+            >
+              {hasPaid ? (
+                <p className="flex place-items-center">
+                  {" "}
+                  <Check className="w-9  h-8 mr-5 " /> Paid{" "}
+                </p>
+              ) : (
+                <p className="flex place-items-center">
+                  <Lock className="w-9 h-8 mr-5" /> Pay{" "}
+                </p>
+              )}
+            </button>
+          )}
         </form>
       )}
     </div>

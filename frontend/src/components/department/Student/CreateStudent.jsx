@@ -11,7 +11,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../../context/AuthContext";
 import styled from "styled-components";
-
+import * as XLSX from "xlsx";
+import "react-toastify/dist/ReactToastify.css";
 // Styled component for the select container
 const SelectContainer = styled.div`
   select {
@@ -46,18 +47,14 @@ const CreateStudent = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Fetch department IDs when component mounts
     const fetchDepartmentIds = async () => {
       try {
         const ids = await departmentService.getDepartmentIds();
-
-        // Set the department ID to the user's department ID
         setFormData((prevData) => ({
           ...prevData,
           department_id: userId,
         }));
-
-        setDepartmentIds(ids); // Set department names in the state
+        setDepartmentIds(ids);
       } catch (error) {
         console.error("Error fetching department IDs:", error.message);
       }
@@ -66,29 +63,29 @@ const CreateStudent = () => {
     fetchDepartmentIds();
   }, [userId]);
 
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const validateForm = () => {
     let valid = true;
     const newErrors = {};
 
-    // Validate first name
     if (!formData.first_name) {
       newErrors.first_name = "First name is required";
       valid = false;
     }
 
-    // Validate last name
     if (!formData.last_name) {
       newErrors.last_name = "Last name is required";
       valid = false;
     }
 
-    // Validate phone number
     if (!formData.phone_number) {
       newErrors.phone_number = "Phone number is required";
       valid = false;
     }
 
-    // Validate contact email
     if (!formData.contact_email) {
       newErrors.contact_email = "Contact email is required";
       valid = false;
@@ -97,7 +94,6 @@ const CreateStudent = () => {
       valid = false;
     }
 
-    // Validate password
     if (!formData.password) {
       newErrors.password = "Password is required";
       valid = false;
@@ -106,13 +102,11 @@ const CreateStudent = () => {
       valid = false;
     }
 
-    // Validate department ID
     if (!formData.department_id) {
       newErrors.department_id = "Department is required";
       valid = false;
     }
 
-    // Validate department ID
     if (!formData.gpa) {
       newErrors.gpa = "Student GPA is required";
       valid = false;
@@ -122,24 +116,15 @@ const CreateStudent = () => {
     return valid;
   };
 
-  const isValidEmail = (email) => {
-    // Email validation logic
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      // Send post request to create student
       const response = await studentService.createStudent(formData);
 
       if (response.status === 400) {
-        // If error occurs
         const responseData = await response.json();
         toast.error(responseData.error, { autoClose: 2000 });
         return;
@@ -159,7 +144,7 @@ const CreateStudent = () => {
           contact_email: "",
           gpa: "",
           password: "",
-          department_id: "",
+          department_id: userId,
         });
         setErrors({});
         toast.success("Student created successfully", { autoClose: 1000 });
@@ -167,13 +152,7 @@ const CreateStudent = () => {
 
       setModalVisible(false);
     } catch (error) {
-      toast.error(
-        "Error creating student:",
-        {
-          autoClose: 1000,
-        },
-        error.message
-      );
+      toast.error("Error creating student", { autoClose: 1000 });
     }
   };
 
@@ -190,12 +169,73 @@ const CreateStudent = () => {
     setErrors({});
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      const bstr = evt.target.result;
+      const workbook = XLSX.read(bstr, { type: "binary" });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(worksheet);
+
+      try {
+        for (const student of data) {
+          const formattedStudent = {
+            first_name: student.first_name || "",
+            last_name: student.last_name || "",
+            phone_number: student.phone_number || "",
+            contact_email: student.contact_email || "",
+            gpa: student.gpa || "",
+            password: student.password || "default123",
+            department_id: userId,
+          };
+
+          const response = await studentService.createStudent(formattedStudent);
+
+          if (!response.ok) {
+            const error = await response.json();
+            toast.error(
+              `Failed to import ${student.first_name}: ${error.error}`,
+              {
+                autoClose: 2000,
+              }
+            );
+          }
+        }
+        toast.success("Excel file imported successfully", { autoClose: 1500 });
+      } catch (err) {
+        toast.error("Error importing students", { autoClose: 2000 });
+      }
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <div>
-      <Button size="medium" onClick={() => setModalVisible(true)}>
-        Add New
-      </Button>
+      <div className="flex ">
+        <Button size="medium" onClick={() => setModalVisible(true)}>
+          Add New
+        </Button>
 
+        {/* Excel Import Button */}
+        <div className="mt-4 mx-4">
+          <label htmlFor="uploadExcel" className="cursor-pointer">
+            <Button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+              Import from Excel
+            </Button>
+          </label>
+          <input
+            type="file"
+            id="uploadExcel"
+            accept=".xlsx, .xls"
+            // Hide the input element
+            onChange={handleFileUpload}
+          />
+        </div>
+      </div>
       {modalVisible && (
         <Modal onClick={handleCloseModal}>
           <Form onSubmit={handleSubmit}>
@@ -259,7 +299,7 @@ const CreateStudent = () => {
                 id="department_id"
                 value={formData.department_id}
                 onChange={handleChange}
-                disabled // Prevent editing
+                disabled
               />
             </FormRow>
 

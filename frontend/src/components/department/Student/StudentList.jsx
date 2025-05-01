@@ -316,7 +316,7 @@ const StudentList = () => {
 
                 <TableHeader>Action</TableHeader>
                 <TableHeader>Progress</TableHeader>
-                <TableHeader>Transaction</TableHeader>
+                <TableHeader>Payment Status</TableHeader>
               </TableRow>
             </TableHead>
             <tbody>
@@ -349,7 +349,11 @@ const StudentList = () => {
                     </button>
                   </TableCell>
                   <TableCell>
-                    <Payment student={student} />
+                    <Payment
+                      bg={"cursor-not-allowed"} // green if paid, red if not
+                      disabled={true} // disable if already paid
+                      student={student}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
