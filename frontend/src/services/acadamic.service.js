@@ -13,14 +13,14 @@ const createAdmin = async (formData) => {
 };
 
 // A function to send a get request to get an admin by ID
-const getAdminById = async () => {
+const getAdminById = async (id) => {
   const requestOptions = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   };
-  const response = await fetch(`${api_url}/api/acadamic/${1}`, requestOptions);
+  const response = await fetch(`${api_url}/api/acadamic/${id}`, requestOptions);
   return response;
 };
 
@@ -37,6 +37,7 @@ const getAllAdmins = async () => {
 };
 
 const updateAdmin = async (adminId, adminData) => {
+  console.log(adminId, adminData);
   const requestOptions = {
     method: "PATCH",
     body: adminData, // Using FormData directly as the body

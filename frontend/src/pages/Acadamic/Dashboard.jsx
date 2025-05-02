@@ -31,6 +31,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from "recharts";
+import { useAuth } from "../../context/AuthContext";
 
 const COLORS = ["#0984e3", "#00cec9", "#fd79a8", "#e17055", "#6c5ce7"];
 
@@ -93,6 +94,9 @@ const ChartBox = styled(Box)`
 `;
 
 function Dashboard() {
+  const { userId, userRole } = useAuth();
+  console.log(userId, userRole);
+
   const [numDepartments, setNumDepartments] = useState(0);
   const [numCompanies, setNumCompanies] = useState(0);
   const [numStudents, setNumStudents] = useState(0);

@@ -63,8 +63,8 @@ async function loginAcadamic(username, password) {
     }
 
     return {
-      id: admin.admin_id,
-      key: "admin_id",
+      id: admin.acadamic_id,
+      key: "acadamic_id",
     };
   } catch (error) {
     console.error("Error logging in admin:", error.message);

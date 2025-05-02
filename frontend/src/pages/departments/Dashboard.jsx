@@ -104,7 +104,7 @@ function Dashboard() {
   const [chartData, setChartData] = useState([]);
 
   const { userId } = useAuth();
-
+  console.log(userId);
   useEffect(() => {
     async function fetchData() {
       try {

@@ -11,10 +11,21 @@ const AuthProvider = ({ children }) => {
   const [isLogged, setIsLogged] = useState(false);
   const [userRole, setUserRole] = useState("");
 
+  // const [userId, setUserId] = useState(() => {
+  //   try {
+  //     const storedUserId = localStorage.getItem("userId");
+  //     return storedUserId ? JSON.parse(storedUserId) : null;
+  //   } catch (error) {
+  //     console.error("Error parsing userId from localStorage:", error);
+  //     return null;
+  //   }
+  // });
+
   const [userId, setUserId] = useState(() => {
     try {
       const storedUserId = localStorage.getItem("userId");
-      return storedUserId ? JSON.parse(storedUserId) : null;
+      if (!storedUserId || storedUserId === "undefined") return null;
+      return JSON.parse(storedUserId);
     } catch (error) {
       console.error("Error parsing userId from localStorage:", error);
       return null;
@@ -47,6 +58,7 @@ const AuthProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         const response = await getAuth();
+        console.log(response);
         if (response.token) {
           setIsLogged(true);
           setUserRole(response.role);

@@ -44,11 +44,13 @@ async function logIn(req, res, next) {
 
     userIdKey = user.key;
 
+    console.log(user);
     const payload = {
       [userIdKey]: user.id,
       user_role: role,
       username: username,
     };
+
     const token = jwt.sign(payload, jwtSecret, {
       expiresIn: "24h",
     });

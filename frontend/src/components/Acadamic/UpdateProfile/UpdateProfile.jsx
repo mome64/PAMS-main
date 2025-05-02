@@ -13,127 +13,90 @@ function UpdateProfile() {
   const { userId } = useAuth();
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
+    full_name: "",
     email: "",
-    photo: "default.jpg",
+    photo: null,
   });
 
   const [errors, setErrors] = useState({});
 
-  const fetchAdminData = async () => {
-    try {
-      const response = await adminService.getAdminById(1);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch admin data");
-      }
-      const adminData = await response.json();
-      const admin = adminData.data;
-      console.log(userId);
-      setFormData(admin);
-    } catch (error) {
-      console.error("Error fetching admin data:", error);
-      toast.error("Error fetching admin data", { autoClose: 2000 });
-    }
-  };
-
   useEffect(() => {
-    fetchAdminData();
+    const fetchData = async () => {
+      try {
+        const response = await adminService.getAdminById(userId);
+        if (!response.ok) throw new Error("Failed to fetch profile");
+
+        const data = await response.json();
+        const academic = data.data;
+
+        setFormData({
+          full_name: academic.full_name || "",
+          email: academic.email || "",
+          photo: null,
+        });
+      } catch (error) {
+        console.error("Fetch error:", error);
+        toast.error("Failed to load profile");
+      }
+    };
+
+    if (userId) fetchData();
   }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      photo: file,
-    }));
+    setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
   };
-
+  console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = {};
-    if (!formData.first_name) {
-      errors.first_name = "First Name is required";
-    }
-    if (!formData.last_name) {
-      errors.last_name = "Last Name is required";
-    }
-    if (!formData.email) {
-      errors.email = "Email is required";
-    }
 
-    setErrors(errors);
+    const validationErrors = {};
+    if (!formData.full_name)
+      validationErrors.full_name = "Full name is required";
+    if (!formData.email) validationErrors.email = "Email is required";
+    setErrors(validationErrors);
 
-    // If there are no errors, submit the form
-    if (Object.keys(errors).length === 0) {
-      try {
-        const formDataWithFile = new FormData();
-        formDataWithFile.append("first_name", formData.first_name);
-        formDataWithFile.append("last_name", formData.last_name);
-        formDataWithFile.append("email", formData.email);
-        if (formData.photo) {
-          formDataWithFile.append("photo", formData.photo);
-        }
+    if (Object.keys(validationErrors).length > 0) return;
 
-        // Update admin information
-        const updateResponse = await adminService.updateAdmin(
-          1,
-          formDataWithFile
-        );
+    try {
+      console.log(data);
+      const data = new FormData();
+      data.append("full_name", formData.full_name);
+      data.append("email", formData.email);
+      if (formData.photo) data.append("photo", formData.photo);
 
-        if (!updateResponse.ok) {
-          throw new Error("Failed to update admin");
-        }
-
-        // Show success toast message
-        toast.success("Profile updated successfully", {
-          autoClose: 500,
-        });
-      } catch (error) {
-        console.error("Error updating admin profile:", error);
-        // Show error toast message
-        toast.error("Failed to update admin profile", { autoClose: 2000 });
-      }
+      const updateRes = await adminService.updateAdmin(userId, data);
+      console.log(updateRes);
+      if (!updateRes.ok) throw new Error("Failed to update");
+      toast.success("Profile updated successfully");
+    } catch (err) {
+      console.error("Update failed:", err);
+      toast.error("Update failed");
     }
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormRow label="First Name" error={errors?.first_name}>
+      <FormRow label="Full Name" error={errors.full_name}>
         <Input
           type="text"
-          id="first_name"
-          name="first_name"
-          value={formData.first_name}
+          id="full_name"
+          name="full_name"
+          value={formData.full_name}
           onChange={handleChange}
         />
       </FormRow>
 
-      <FormRow label="Last Name" error={errors?.last_name}>
-        <Input
-          type="text"
-          id="last_name"
-          name="last_name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />
-      </FormRow>
-
-      <FormRow label="Email address" error={errors?.email}>
+      <FormRow label="Email" error={errors.email}>
         <Input
           type="email"
           id="email"
           name="email"
-          autoComplete="off"
           value={formData.email}
           onChange={handleChange}
         />
@@ -151,16 +114,8 @@ function UpdateProfile() {
 
       <FormRow>
         <CancelButton
-          variant="secondary"
           type="reset"
-          onClick={() =>
-            setFormData({
-              first_name: "",
-              last_name: "",
-              email: "",
-              photo: null,
-            })
-          }
+          onClick={() => setFormData({ full_name: "", email: "", photo: null })}
         >
           Cancel
         </CancelButton>
