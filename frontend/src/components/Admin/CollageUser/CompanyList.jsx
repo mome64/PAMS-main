@@ -332,7 +332,7 @@ const CompanyList = () => {
             <TableHead>
               <TableRow>
                 <TableHeader>ID</TableHeader>
-                <TableHeader>Collage Name</TableHeader>
+
                 <TableHeader>Collage Dean Name</TableHeader>
                 <TableHeader>Phone Number</TableHeader>
                 <TableHeader>Contact Email</TableHeader>
@@ -342,11 +342,9 @@ const CompanyList = () => {
               </TableRow>
             </TableHead>
             <tbody>
-              {companies.map((company) => (
+              {companies.map((company, index) => (
                 <TableRow key={company.acadamic_id}>
-                  <TableCell>{company.acadamic_id}</TableCell>
-
-                  <TableCell>{company.college_name}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
 
                   <TableCell>{company.full_name}</TableCell>
                   <TableCell>{company.phone_number}</TableCell>

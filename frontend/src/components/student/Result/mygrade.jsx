@@ -83,15 +83,8 @@ const MyGradeResult = () => {
 
   if (loading) return <Spinner />;
 
-  if (!grade)
-    return (
-      <Container>
-        <p>No grade result found for you yet.</p>
-      </Container>
-    );
-
-  const academic = parseInt(grade.academic_result || 0);
-  const company = parseInt(grade.company_result || 0);
+  const academic = parseInt(grade?.academic_result || 0);
+  const company = parseInt(grade?.company_result || 0);
   const total = academic + company;
   const gradeLetter = getLetterGrade(total);
 
@@ -99,23 +92,29 @@ const MyGradeResult = () => {
     <div>
       <PageContainer>
         <Header />
-        <Container className="mt-9">
-          <h2>Your Grade Result</h2>
-          <ResultBox>
-            <Label>Academic Score (60%)</Label>
-            <Value>{academic}</Value>
+        {grade ? (
+          <Container className="mt-9">
+            <h2>Your Grade Result</h2>
+            <ResultBox>
+              <Label>Academic Score (60%)</Label>
+              <Value>{academic}</Value>
 
-            <Label>Company Score (40%)</Label>
-            <Value>{company}</Value>
+              <Label>Company Score (40%)</Label>
+              <Value>{company}</Value>
 
-            <Label>Total Score (100%)</Label>
-            <Value>{total}</Value>
+              <Label>Total Score (100%)</Label>
+              <Value>{total}</Value>
 
-            <GradeLetter grade={gradeLetter}>
-              Final Grade: {gradeLetter}
-            </GradeLetter>
-          </ResultBox>
-        </Container>
+              <GradeLetter grade={gradeLetter}>
+                Final Grade: {gradeLetter}
+              </GradeLetter>
+            </ResultBox>
+          </Container>
+        ) : (
+          <Container>
+            <p>No grade result found for you yet.</p>
+          </Container>
+        )}
       </PageContainer>
     </div>
   );
