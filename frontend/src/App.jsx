@@ -61,6 +61,7 @@ import DepartmentTransactionForm from "./pages/Acadamic/DepartmentTransactionFor
 import StudentProgress from "./pages/company/StudentProgress";
 import StudentList from "./components/Acadamic/ApplyStudentList/StudentList";
 import Collage from "./pages/Admin/Collage";
+import MyGradeResult from "./components/student/Result/mygrade";
 
 function App() {
   return (
@@ -364,6 +365,14 @@ function App() {
             element={
               <PrivateAuthRoute roles={["Student"]}>
                 <EvaluationResults />
+              </PrivateAuthRoute>
+            }
+          />
+          <Route
+            path="student/grade-results"
+            element={
+              <PrivateAuthRoute roles={["Student"]}>
+                <MyGradeResult />
               </PrivateAuthRoute>
             }
           />
