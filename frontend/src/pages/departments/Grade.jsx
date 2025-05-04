@@ -3,6 +3,7 @@ import CreateStudent from "../../components/department/Student/CreateStudent";
 import Heading from "../../ui/Heading";
 import Row from "../../ui/Row";
 import StudentList from "../../components/department/Student/StudentList";
+import GradeMake from "../../components/department/Student/GradeMake";
 
 // Styled component for the Company component
 const StudentContainer = styled.div`
@@ -17,7 +18,7 @@ function Grade() {
         <Heading as="h1">Make student grade </Heading>
       </Row>
       <Row>
-        <StudentList />
+        <GradeMake />
       </Row>
     </StudentContainer>
   );

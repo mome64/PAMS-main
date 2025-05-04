@@ -10,7 +10,8 @@ router.get(
   "/api/results/:departmentId",
   sendResultsController.getResultsByDepartmentId
 );
-
+router.post("/api/grades/submit", sendResultsController.submitGrades);
+router.get("/api/grades", sendResultsController.getGrades);
 router.get(
   "/api/results/student/:studentId",
   sendResultsController.getResultsByStudentId

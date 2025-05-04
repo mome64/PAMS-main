@@ -52,7 +52,52 @@ const updateStudent = async (studentId, formData) => {
   );
   return response;
 };
+const submitGrades = async (gradeData) => {
+  console.log(gradeData);
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ grades: gradeData }),
+  };
 
+  try {
+    const response = await fetch(
+      `${api_url}/api/grades/submit`,
+      requestOptions
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to submit grades.");
+    }
+
+    const responseData = await response.json();
+    return responseData; // Return the response data
+  } catch (error) {
+    console.error("Error submitting grades:", error);
+    throw error; // Propagate the error so it can be handled in the component
+  }
+};
+
+const fetchGrades = async () => {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  try {
+    const response = await fetch(`${api_url}/api/grades`, requestOptions);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch grades.");
+    }
+
+    const responseData = await response.json();
+    return responseData; // Return the fetched grades data
+  } catch (error) {
+    console.error("Error fetching grades:", error);
+    throw error; // Propagate the error so it can be handled in the component
+  }
+};
 // A function to send put request to update a student
 const updateStudentProfile = async (studentId, formData) => {
   const requestOptions = {
@@ -208,10 +253,11 @@ const deleteAllPlacementResults = async () => {
 const studentService = {
   createStudent,
   getStudent,
+  fetchGrades,
   getAllStudents,
   getStudentPhoto,
   getAllApplyStudents,
-
+  submitGrades,
   deleteStudent,
   getStudentsByDepartment,
   deleteAllPlacementResults,

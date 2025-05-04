@@ -56,8 +56,48 @@ async function getResultsByStudentId(req, res) {
   }
 }
 
+async function submitGrades(req, res) {
+  const { grades } = req.body;
+  console.log(grades);
+  if (!grades || !Array.isArray(grades)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid grade data" });
+  }
+
+  try {
+    await resultService.submitGrades(grades);
+    res
+      .status(200)
+      .json({ success: true, message: "Grades submitted successfully" });
+  } catch (error) {
+    console.error("Error in submitGrades controller:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while submitting grades",
+    });
+  }
+}
+async function getGrades(req, res) {
+  try {
+    const grades = await resultService.fetchAllGrades();
+    res.status(200).json({
+      success: true,
+      data: grades,
+    });
+  } catch (error) {
+    console.error("Error fetching grades:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching grades",
+    });
+  }
+}
+
 module.exports = {
   sendResults,
+  getGrades,
+  submitGrades,
   getResultsByDepartmentId,
   getResultsByStudentId,
 };
