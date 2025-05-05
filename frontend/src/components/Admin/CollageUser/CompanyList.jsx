@@ -174,7 +174,7 @@ const CompanyList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const companiesPerPage = 5;
+  const companiesPerPage = 15;
 
   const [searchParams] = useSearchParams();
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
@@ -197,8 +197,8 @@ const CompanyList = () => {
             id: (page - 1) * companiesPerPage + index + 1,
           }));
 
-          const data = responseData.totalCount;
-
+          const data = responseData.admins.length;
+          console.log(data);
           setCompanies(companiesData);
           setTotalCompanies(data);
           setLoading(false);
@@ -280,8 +280,8 @@ const CompanyList = () => {
           ...company,
           id: (page - 1) * companiesPerPage + index + 1,
         }));
-
-        const data = responseData.totalCount;
+        const data = responseData.admins.length;
+        console.log(data);
 
         setCompanies(companiesData);
         setTotalCompanies(data);

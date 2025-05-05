@@ -2,6 +2,7 @@
 const { query } = require("../config/db.config");
 const bcrypt = require("bcrypt");
 
+const { sendEmail } = require("../sendEmail");
 // Function to hash the password using bcrypt
 const hashPassword = async (password) => {
   return await bcrypt.hash(password, 10);
@@ -49,7 +50,12 @@ async function createDepartment(department) {
       hashedPassword,
     ]);
     const departmentId = result.insertId;
-
+    await sendEmail(
+      department.department_name,
+      department.contact_email,
+      username,
+      department.password
+    );
     return departmentId;
   } catch (error) {
     console.error("Error creating department:", error.message);

@@ -66,7 +66,7 @@ function MainNav() {
         <li>
           <StyledNavLink to="/admin/Collage">
             <MdDashboard />
-            <span>Collage</span>
+            <span>Acadamic Dean</span>
           </StyledNavLink>
         </li>
 
