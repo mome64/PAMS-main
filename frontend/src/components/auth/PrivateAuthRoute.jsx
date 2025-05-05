@@ -12,6 +12,31 @@ const PrivateAuthRoute = ({ roles, children }) => {
       try {
         const loggedInUser = await getAuth();
         const userRole = loggedInUser.role;
+        console.log(userRole);
+        switch (userRole) {
+          case "Admin":
+            document.title = "Admin-Page"; // Change title for Admin role
+
+            break;
+          case "Company":
+            document.title = "Company-Page"; // Change title for Company role
+
+            break;
+          case "Student":
+            document.title = "Student-Page"; // Change title for Student role
+
+            break;
+          case "Department":
+            document.title = "Department-Page"; // Change title for Department role
+
+            break;
+          case "acadamic":
+            document.title = "Academic-Page"; // Change title for Academic role
+
+            break;
+          default:
+            document.title = "Home - MySite"; // Default title for other roles
+        }
 
         if (userRole) {
           setIsLoggedin(true);
