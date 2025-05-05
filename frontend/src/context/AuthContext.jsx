@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         const response = await getAuth();
-        console.log(response);
+
         if (response.token) {
           setIsLogged(true);
           setUserRole(response.role);

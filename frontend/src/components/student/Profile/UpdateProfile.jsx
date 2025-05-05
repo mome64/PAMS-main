@@ -58,7 +58,6 @@ function UpdateProfile() {
       photo: file,
     }));
   };
-  console.log("ffffffff", formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,19 +80,38 @@ function UpdateProfile() {
     // If there are no errors, submit the form
     if (Object.keys(errors).length === 0) {
       try {
+        // const formDataWithFile = new FormData();
+        // formDataWithFile.append("first_name", formData.first_name);
+        // formDataWithFile.append("last_name", formData.last_name);
+        // formDataWithFile.append("contact_email", formData.contact_email);
+        // formDataWithFile.append("phone_number", formData.phone_number);
+        // if (formData.photo) {
+        //   formDataWithFile.append("photo", formData.photo);
+        // }
+
+        // // Update student information
+        // console.log(formDataWithFile);
+        // const updateResponse = await studentService.updateStudentProfile(
+        //   userId,
+        //   formDataWithFile
+        // );
         const formDataWithFile = new FormData();
         formDataWithFile.append("first_name", formData.first_name);
         formDataWithFile.append("last_name", formData.last_name);
         formDataWithFile.append("contact_email", formData.contact_email);
         formDataWithFile.append("phone_number", formData.phone_number);
+
         if (formData.photo) {
           formDataWithFile.append("photo", formData.photo);
         }
 
-        // Update student information
+        // ✅ Display contents of FormData
+        const formDataObject = Object.fromEntries(formDataWithFile.entries());
+        console.log(formDataObject.photo);
+        // ✅ Proceed to update student
         const updateResponse = await studentService.updateStudentProfile(
           userId,
-          formDataWithFile
+          formDataObject
         );
 
         if (!updateResponse.ok) {

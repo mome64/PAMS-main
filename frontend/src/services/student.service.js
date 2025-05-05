@@ -100,6 +100,7 @@ const fetchGrades = async () => {
 };
 // A function to send put request to update a student
 const updateStudentProfile = async (studentId, formData) => {
+  console.log(formData);
   const requestOptions = {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
