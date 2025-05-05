@@ -178,7 +178,7 @@ function Payment({ student, disabled }) {
           <input
             type="hidden"
             name="return_url"
-            value="http://localhost:5173/department/student"
+            value="http://localhost:5173/acadamic/student"
           />
           <input type="hidden" name="meta[title]" value="Student Practical" />
           {disabled ? (
