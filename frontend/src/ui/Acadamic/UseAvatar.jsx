@@ -61,12 +61,7 @@ function UserAvatar() {
   return (
     <>
       <StyledUserAvatar>
-        <Avatar
-          src={`http://localhost:8080/images/admin/${
-            photoUrl || "default.png"
-          }`}
-          alt="Admin Avatar"
-        />
+        <Avatar src={`/${photoUrl || "default.png"}`} alt=" Avatar" />
       </StyledUserAvatar>
     </>
   );

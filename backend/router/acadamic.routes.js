@@ -8,12 +8,7 @@ router.get("/api/acadamic", adminController.getAllAdmins);
 router.get("/api/acadamic/:id", adminController.getAdminById);
 router.delete("/api/acadamic/:id", adminController.deleteAcademic);
 
-
-router.patch(
-  "/api/acadamic/:id",
-  adminController.UplodeAdminPhoto,
-  adminController.updateAdmin
-);
+router.patch("/api/acadamic/:id", adminController.updateAdmin);
 
 router.patch("/api/acadamic/password/:id", adminController.changePassword);
 

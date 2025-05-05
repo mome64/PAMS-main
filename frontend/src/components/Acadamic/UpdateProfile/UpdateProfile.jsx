@@ -15,7 +15,7 @@ function UpdateProfile() {
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
-    photo: null,
+    photo: "default.jpg",
   });
 
   const [errors, setErrors] = useState({});
@@ -49,9 +49,14 @@ function UpdateProfile() {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
+    // Extract the file name from the file path (for modern browsers)
+    const filePath = e.target.value;
+    const fileName = filePath.split(/(\\|\/)/g).pop(); // Get the last part after splitting by \ or /
+
+    // Update the formData with the file name
+    setFormData((prev) => ({ ...prev, photo: fileName }));
   };
-  console.log(formData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,14 +69,14 @@ function UpdateProfile() {
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      console.log(data);
       const data = new FormData();
       data.append("full_name", formData.full_name);
       data.append("email", formData.email);
       if (formData.photo) data.append("photo", formData.photo);
+      const formDataObject = Object.fromEntries(data.entries());
 
-      const updateRes = await adminService.updateAdmin(userId, data);
-      console.log(updateRes);
+      const updateRes = await adminService.updateAdmin(userId, formDataObject);
+
       if (!updateRes.ok) throw new Error("Failed to update");
       toast.success("Profile updated successfully");
     } catch (err) {
@@ -87,6 +92,7 @@ function UpdateProfile() {
           type="text"
           id="full_name"
           name="full_name"
+          required
           value={formData.full_name}
           onChange={handleChange}
         />
@@ -97,6 +103,7 @@ function UpdateProfile() {
           type="email"
           id="email"
           name="email"
+          required
           value={formData.email}
           onChange={handleChange}
         />
@@ -106,6 +113,7 @@ function UpdateProfile() {
         <Input
           type="file"
           id="photo"
+          required
           name="photo"
           accept="image/*"
           onChange={handleFileChange}

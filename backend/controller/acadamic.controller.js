@@ -84,19 +84,11 @@ async function updateAdmin(req, res, next) {
   try {
     // Extract admin ID from request parameters
     const adminId = req.params.id;
-
+    console.log(req.body);
     // Check if a file was uploaded
-    let photoFilename = null;
-    if (req.file) {
-      photoFilename = req.file.filename;
-    }
 
     // Call the service to update the admin
-    const success = await adminService.updateAdmin(
-      adminId,
-      req.body,
-      photoFilename
-    );
+    const success = await adminService.updateAdmin(adminId, req.body);
 
     // Check if the admin was successfully updated
     if (success) {

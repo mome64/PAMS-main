@@ -40,13 +40,15 @@ const updateAdmin = async (adminId, adminData) => {
   console.log(adminId, adminData);
   const requestOptions = {
     method: "PATCH",
-    body: adminData, // Using FormData directly as the body
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(adminData), // Using FormData directly as the body
   };
 
   const response = await fetch(
     `${api_url}/api/acadamic/${adminId}`,
     requestOptions
   );
+
   return response;
 };
 

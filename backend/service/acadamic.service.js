@@ -103,38 +103,31 @@ async function getAllAdmins() {
   }
 }
 
-async function updateAdmin(adminId, adminData, photoFilename) {
+async function updateAdmin(adminId, adminData) {
   try {
-    const { first_name, last_name, email } = adminData;
+    console.log("ad", adminData);
+    const { full_name, email, photo } = adminData;
 
     // Check if a photo filename is provided and update the adminData accordingly
-    if (photoFilename) {
-      adminData.photo = photoFilename;
-    }
+    const last_name = "HU";
 
-    const username = `acadamic.${first_name.toLowerCase()}.${last_name
+    const username = `acadamic.${full_name.toLowerCase()}.${last_name
       .slice(0, 2)
       .toLowerCase()}`;
 
     // Update the admin data
     const updateSql = `
       UPDATE acadamic
-      SET first_name = ?,
-          last_name = ?,
+      SET full_name = ?,
+         
+         
           username = ?,
           email = ?,
           photo = ?
       WHERE acadamic_id = ?
     `;
 
-    const params = [
-      first_name,
-      last_name,
-      username,
-      email,
-      adminData.photo,
-      adminId,
-    ];
+    const params = [full_name, username, email, photo, adminId];
 
     // Execute the SQL update query
     const result = await query(updateSql, params);
