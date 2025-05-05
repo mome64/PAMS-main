@@ -52,10 +52,12 @@ function UpdateProfile() {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const { name, value } = e.target;
+    const last = value.split(/\\|\//);
+
     setFormData((prevData) => ({
       ...prevData,
-      photo: file,
+      [name]: last[last.length - 1],
     }));
   };
 

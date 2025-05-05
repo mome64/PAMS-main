@@ -206,11 +206,8 @@ const Header = () => {
         <LeftContainer>
           <Avatar
             style={{ marginRight: "20px", marginLeft: "40px" }}
-            src={
-              `http://localhost:8080/images/student/` + photoUrl ||
-              defaultAvatar
-            }
-            alt="Admin Avatar"
+            src={`/${photoUrl}`}
+            alt="Student Avatar"
           />
 
           {isLogged && (

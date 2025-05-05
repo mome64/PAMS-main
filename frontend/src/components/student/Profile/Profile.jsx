@@ -70,7 +70,6 @@ const UserProfile = () => {
 
           console.log("hello", student);
 
-          console.log("hhhhhh", student.photoUrl);
           if (student.students.photo) {
             const adjustedPhotoUrl = student.students.photo.replace(
               "/public",
@@ -138,10 +137,7 @@ const UserProfile = () => {
               gap: "50px",
             }}
           >
-            <ProfileImage
-              src={`http://localhost:8080/images/student/` + photoUrl || avatar}
-              alt="Admin Avatar"
-            />
+            <ProfileImage src={`/${student.photo}`} alt="Admin Avatar" />
             <div>
               <ProfileInfo>
                 <Label style={{ marginRight: "20px" }}>Your Name:</Label>
