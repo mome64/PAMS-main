@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { EditIcon, Trash2Icon, PlusIcon } from "lucide-react";
 import departmentService from "../../services/department.service";
+import { useAuth } from "../../context/AuthContext";
 
 const TransactionForm = () => {
   // const departments = ["HR", "Finance", "IT", "Marketing"];
@@ -16,6 +17,8 @@ const TransactionForm = () => {
   const [departments, setDepartments] = useState([]);
   const page = 1;
   const DepartmentPerPage = 20;
+  const { collage } = useAuth();
+
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -29,12 +32,15 @@ const TransactionForm = () => {
         if (response.ok) {
           const responseData = await response.json();
 
-          const departmentsData = responseData.departments?.map(
-            (department, index) => ({
+          const departmentsData = responseData.departments
+            ?.filter(
+              (department) =>
+                department?.college_name.toLowerCase() === collage.toLowerCase()
+            )
+            .map((department, index) => ({
               ...department,
               id: (page - 1) * DepartmentPerPage + index + 1,
-            })
-          );
+            }));
           // console.log(departmentsData);
           setDepartments(
             departmentsData.map(
@@ -52,15 +58,27 @@ const TransactionForm = () => {
     };
     fetchDepartments();
   }, [page]);
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const res = await fetch("http://localhost:8080/api/transactions");
         const data = await res.json();
-
+        console.log(
+          data.data?.filter(
+            (transaction) =>
+              transaction?.college_name.toLowerCase() === collage.toLowerCase()
+          )
+        );
         if (res.ok) {
-          setTransactions(data.data); // assuming your backend returns { data: [...] }
-          console.log(data.data);
+          setTransactions(
+            data.data?.filter(
+              (transaction) =>
+                transaction?.college_name.toLowerCase() ===
+                collage.toLowerCase()
+            )
+          );
+          // assuming your backend returns { data: [...] }
         } else {
           console.error("Failed to load transactions:", data.error);
         }
@@ -71,6 +89,7 @@ const TransactionForm = () => {
 
     fetchTransactions();
   }, []);
+
   const handleAdd = async () => {
     if (!selectedDept || !amount) return;
 
@@ -92,6 +111,7 @@ const TransactionForm = () => {
         },
         body: JSON.stringify({
           department: selectedDept,
+          collage: collage,
           amount: parseFloat(amount),
         }),
       });

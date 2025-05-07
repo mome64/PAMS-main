@@ -64,7 +64,7 @@ function Payment({ student, disabled }) {
       try {
         const res = await fetch("http://localhost:8080/api/transactions");
         const data = await res.json();
-
+        console.log(data);
         if (res.ok) {
           setDepamount(data.data); // assuming your backend returns { data: [...] }
         } else {
@@ -83,12 +83,13 @@ function Payment({ student, disabled }) {
 
     // Find the matching department name from departments list
     const department = departments.find(
-      (dept) => dept.id === studentDepartmentId
+      (dept) => dept.department_id === studentDepartmentId
     );
 
     if (!department) return;
 
     // Find the matching transaction by department name
+    console.log(depAmount);
     const transaction = depAmount.find(
       (tx) => tx.department === department.department_name
     );
@@ -109,7 +110,7 @@ function Payment({ student, disabled }) {
       if (response.data.status) {
         const allTransactions = response.data.data;
         setTransactions(allTransactions);
-
+        console.log(allTransactions);
         // Now check if student has already paid (by matching name and email)
         const found = allTransactions.find(
           (tx) =>
@@ -133,7 +134,7 @@ function Payment({ student, disabled }) {
   }
 
   if (!student) return null;
-
+  console.log(payAmount);
   return (
     <div>
       {/* For debugging purposes */}

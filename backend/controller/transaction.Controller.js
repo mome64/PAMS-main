@@ -2,11 +2,12 @@ const transactionService = require("../service/transaction.Service");
 
 async function createTransaction(req, res) {
   try {
-    const { department, amount } = req.body;
+    const { department, amount, collage } = req.body;
 
     const result = await transactionService.createTransaction(
       department,
-      amount
+      amount,
+      collage
     );
 
     res.status(201).json({

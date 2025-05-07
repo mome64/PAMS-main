@@ -1,12 +1,13 @@
 const db = require("../config/db.config");
 
-async function createTransaction(department, amount) {
+async function createTransaction(department, amount, collage) {
   if (!department || isNaN(amount)) {
     throw new Error("Invalid department or amount");
   }
 
-  const sql = "INSERT INTO payamout (department, amount) VALUES (?, ?)";
-  const result = await db.query(sql, [department, amount]);
+  const sql =
+    "INSERT INTO payamout (department, amount,college_name) VALUES (?, ?,?)";
+  const result = await db.query(sql, [department, amount, collage]);
 
   return result;
 }

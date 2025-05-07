@@ -90,7 +90,7 @@ const AuthProvider = ({ children }) => {
 
     fetchData();
   }, []);
-  console.log(users);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

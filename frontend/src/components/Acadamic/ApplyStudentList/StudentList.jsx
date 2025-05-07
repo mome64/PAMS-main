@@ -129,7 +129,6 @@ const StudentList = () => {
     fetchDepartments();
   }, [page]);
 
-  console.log(students);
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -143,11 +142,9 @@ const StudentList = () => {
 
         if (response.ok) {
           const responseData = await response.json();
+          const Col = collage.toLowerCase();
           const studentsData = responseData.students
-            ?.filter(
-              (student) =>
-                student?.college_name.toLowerCase() === collage.toLowerCase()
-            )
+            ?.filter((student) => student?.college_name.toLowerCase() === Col)
             .map((student, index) => ({
               ...student,
               id: (currentPage - 1) * studentsPerPage + index + 1,

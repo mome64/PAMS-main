@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import getAuth from "../../utils/auth";
+import { useAuth } from "../../context/AuthContext";
 
 const PrivateAuthRoute = ({ roles, children }) => {
   const [isChecked, setIsChecked] = useState(false);
@@ -11,6 +12,8 @@ const PrivateAuthRoute = ({ roles, children }) => {
     const checkAuth = async () => {
       try {
         const loggedInUser = await getAuth();
+        const { userL } = getAuth();
+
         const userRole = loggedInUser.role;
 
         switch (userRole) {
@@ -31,7 +34,7 @@ const PrivateAuthRoute = ({ roles, children }) => {
 
             break;
           case "acadamic":
-            document.title = "Academic-Page"; // Change title for Academic role
+            document.title = `${userL.college_name} - Page`; // Change title for Academic role
 
             break;
           default:
