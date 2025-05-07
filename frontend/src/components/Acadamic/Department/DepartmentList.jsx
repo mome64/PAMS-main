@@ -11,6 +11,8 @@ import { toast } from "react-toastify";
 import Pagination from "../../../ui/Pagination";
 import TableType from "../../../ui/TabelType";
 import { useSearchParams } from "react-router-dom";
+import getAuth from "../../../utils/auth";
+import AuthProvider, { useAuth } from "../../../context/AuthContext";
 
 const Table = styled.table`
   width: 100%;
@@ -166,6 +168,8 @@ const ConfirmationDialog = ({ message, onConfirm, onCancel, show }) => {
 };
 
 const DepartmentList = () => {
+  const { collage } = useAuth();
+  console.log(collage);
   const [departments, setDepartments] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [totalDepartment, setTotalDepartment] = useState(0);
@@ -194,14 +198,16 @@ const DepartmentList = () => {
         if (response.ok) {
           const responseData = await response.json();
 
-          const departmentsData = responseData.departments?.map(
-            (department, index) => ({
+          const departmentsData = responseData.departments
+            ?.filter(
+              (department) =>
+                department?.college_name.toLowerCase() === collage.toLowerCase()
+            )
+            .map((department, index) => ({
               ...department,
               id: (page - 1) * DepartmentPerPage + index + 1,
-            })
-          );
+            }));
 
-          
           setDepartments(departmentsData);
 
           const data = responseData.totalCount;

@@ -12,7 +12,7 @@ const PrivateAuthRoute = ({ roles, children }) => {
       try {
         const loggedInUser = await getAuth();
         const userRole = loggedInUser.role;
-        console.log(userRole);
+
         switch (userRole) {
           case "Admin":
             document.title = "Admin-Page"; // Change title for Admin role

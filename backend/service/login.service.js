@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 async function loginStudent(username, password) {
   try {
-    const sql = "SELECT student_id, password FROM students WHERE username = ?";
+    const sql = "SELECT * FROM students WHERE username = ?";
     const [student] = await query(sql, [username]);
 
     if (!student) {
@@ -14,10 +14,11 @@ async function loginStudent(username, password) {
     if (!match) {
       return { invalidPassword: true }; // Incorrect password
     }
-
+    console.log(student);
     return {
       id: student.student_id,
       key: "student_id",
+      user: student,
     };
   } catch (error) {
     console.error("Error logging in student:", error.message);
@@ -27,7 +28,7 @@ async function loginStudent(username, password) {
 
 async function loginAdmin(username, password) {
   try {
-    const sql = "SELECT admin_id, password FROM admins WHERE username = ?";
+    const sql = "SELECT * FROM admins WHERE username = ?";
     const [admin] = await query(sql, [username]);
 
     if (!admin) {
@@ -42,6 +43,7 @@ async function loginAdmin(username, password) {
     return {
       id: admin.admin_id,
       key: "admin_id",
+      user: admin,
     };
   } catch (error) {
     console.error("Error logging in admin:", error.message);
@@ -50,7 +52,7 @@ async function loginAdmin(username, password) {
 }
 async function loginAcadamic(username, password) {
   try {
-    const sql = "SELECT acadamic_id, password FROM acadamic WHERE username = ?";
+    const sql = "SELECT * FROM acadamic WHERE username = ?";
     const [admin] = await query(sql, [username]);
 
     if (!admin) {
@@ -61,10 +63,11 @@ async function loginAcadamic(username, password) {
     if (!match) {
       return { invalidPassword: true }; // Incorrect password
     }
-
+    console.log(admin);
     return {
       id: admin.acadamic_id,
       key: "acadamic_id",
+      user: admin,
     };
   } catch (error) {
     console.error("Error logging in admin:", error.message);
@@ -73,7 +76,7 @@ async function loginAcadamic(username, password) {
 }
 async function loginCompany(username, password) {
   try {
-    const sql = "SELECT company_id, password FROM companies WHERE username = ?";
+    const sql = "SELECT * FROM companies WHERE username = ?";
     const [company] = await query(sql, [username]);
 
     if (!company) {
@@ -88,6 +91,7 @@ async function loginCompany(username, password) {
     return {
       id: company.company_id,
       key: "company_id",
+      user: company,
     };
   } catch (error) {
     console.error("Error logging in company:", error.message);
@@ -97,8 +101,7 @@ async function loginCompany(username, password) {
 
 async function loginDepartment(username, password) {
   try {
-    const sql =
-      "SELECT department_id, password FROM departments WHERE username = ?";
+    const sql = "SELECT * FROM departments WHERE username = ?";
     const [department] = await query(sql, [username]);
 
     if (!department) {
@@ -113,6 +116,7 @@ async function loginDepartment(username, password) {
     return {
       id: department.department_id,
       key: "department_id",
+      user: department,
     };
   } catch (error) {
     console.error("Error logging in department:", error.message);

@@ -8,14 +8,17 @@ import CancelButton from "../../../ui/CancelButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import departmentService from "../../../services/department.service";
+import { useAuth } from "../../../context/AuthContext";
 
 const CreateDepartment = () => {
+  const { collage } = useAuth();
   const [formData, setFormData] = useState({
     department_name: "",
     phone_number: "",
     contact_email: "",
     office_location: "",
     password: "",
+    collage,
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -83,6 +86,7 @@ const CreateDepartment = () => {
       if (response.status === 400) {
         // If department name already exists
         const responseData = await response.json();
+        console.log;
         toast.error(responseData.error, { autoClose: 1000 });
         return;
       }
@@ -100,6 +104,7 @@ const CreateDepartment = () => {
           contact_email: "",
           office_location: "",
           password: "",
+          collage: collage,
         });
         setErrors({});
         toast.success(responseData.message, { autoClose: 2000 });

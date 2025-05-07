@@ -301,6 +301,26 @@ const CompanyList = () => {
     }
   };
 
+  const filterCompanies = (companies) => {
+    const {
+      company_name,
+      phone_number,
+      contact_email,
+
+      college_name,
+    } = companies;
+    return (
+      company_name.toLowerCase().includes(searchText) ||
+      college_name.toLowerCase().includes(searchText) ||
+      phone_number.toLowerCase().includes(searchText) ||
+      contact_email.toLowerCase().includes(searchText)
+    );
+  };
+
+  const filterdCompanies = searchText
+    ? companies.filter(filterCompanies)
+    : companies;
+
   return (
     <>
       <ConfirmationDialog
@@ -349,7 +369,7 @@ const CompanyList = () => {
               </TableRow>
             </TableHead>
             <tbody>
-              {companies.map((company) => (
+              {filterdCompanies.map((company) => (
                 <TableRow key={company.company_id}>
                   <TableCell>{company.id}</TableCell>
                   <TableCell>{company.company_name}</TableCell>

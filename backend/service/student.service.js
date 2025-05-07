@@ -37,8 +37,9 @@ async function createStudent(student) {
         gpa,
         photo,
         password,
-        department_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        department_id,
+        college_name
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     `;
 
     const defaultPhotoPath = "default.jpg";
@@ -52,6 +53,7 @@ async function createStudent(student) {
       defaultPhotoPath,
       hashedPassword,
       student.department_id,
+      student.collage,
     ]);
     const studentId = result.insertId;
 
@@ -284,31 +286,34 @@ async function acceptStudentApplyForm({
   name,
   disability,
   gender,
+  collage,
   preferences,
 }) {
   try {
     const insertApplyFormSql = `
-      INSERT INTO student_apply_form (student_id, name, disability, gender)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO student_apply_form (student_id, name, disability, gender ,college_name)
+      VALUES (?, ?, ?, ?,?)
     `;
     const result = await query(insertApplyFormSql, [
       student_id,
       name,
       disability,
       gender,
+      collage,
     ]);
     const apply_id = result.insertId;
 
     for (let i = 0; i < preferences.length; i++) {
       const insertPreferenceSql = `
-        INSERT INTO student_preferences (apply_id, preference_order, student_id, company_id)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO student_preferences (apply_id, preference_order, student_id, company_id,college_name)
+        VALUES (?, ?, ?, ?,?)
       `;
       await query(insertPreferenceSql, [
         apply_id,
         i + 1,
         student_id,
         preferences[i],
+        collage,
       ]);
     }
   } catch (error) {
@@ -321,28 +326,32 @@ async function acceptStudentApplyForm({
 async function getAllApplyStudents() {
   try {
     const sql = `
-      SELECT
-        sa.apply_id,
-        s.student_id,
-        CONCAT(s.first_name, ' ', s.last_name) AS student_name,
-        sa.disability,
-        s.department_id,
-        sa.gender,
-        s.gpa,
-        GROUP_CONCAT(DISTINCT sp.company_id ORDER BY sp.preference_order) AS preferences,
-        p.company_name
-      FROM
-        students s
-      INNER JOIN
-        student_apply_form sa ON s.student_id = sa.student_id
-      LEFT JOIN
-        student_preferences sp ON sa.apply_id = sp.apply_id
-      LEFT JOIN
-        placement_results pr ON s.student_id = pr.student_id
-      LEFT JOIN
-        companies p ON pr.company_id = p.company_id
-      GROUP BY
-        sa.apply_id;
+    SELECT
+  sa.apply_id,
+  s.student_id,
+  CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+  sa.disability,
+  s.department_id,
+  sa.gender,
+  s.gpa,
+  GROUP_CONCAT(DISTINCT sp.company_id ORDER BY sp.preference_order) AS preferences,
+  p.company_name,
+  d.college_name
+FROM
+  students s
+INNER JOIN
+  student_apply_form sa ON s.student_id = sa.student_id
+LEFT JOIN
+  student_preferences sp ON sa.apply_id = sp.apply_id
+LEFT JOIN
+  placement_results pr ON s.student_id = pr.student_id
+LEFT JOIN
+  companies p ON pr.company_id = p.company_id
+LEFT JOIN
+  departments d ON s.department_id = d.department_id
+GROUP BY
+  sa.apply_id;
+
     `;
     const students = await query(sql);
     return students;
@@ -363,7 +372,8 @@ async function getApplyStudentsById(id) {
       sa.disability,
       sa.gender,
       s.gpa,
-      GROUP_CONCAT(DISTINCT sp.company_id ORDER BY sp.preference_order) AS preferences
+      GROUP_CONCAT(DISTINCT sp.company_id ORDER BY sp.preference_order) AS preferences,
+      d.college_name
     FROM
         students s
     INNER JOIN
@@ -372,6 +382,8 @@ async function getApplyStudentsById(id) {
         student_preferences sp ON sa.apply_id = sp.apply_id
     LEFT JOIN
         placement_results pr ON s.student_id = pr.student_id
+        LEFT JOIN
+  departments d ON s.department_id = d.department_id
     WHERE
         s.student_id = ?
     GROUP BY

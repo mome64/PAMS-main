@@ -20,7 +20,7 @@ async function createDepartment(department) {
   try {
     // Generate a unique username for the department
     const username = `dept.${department.department_name}`;
-
+    console.log("dsfsf", department);
     // Hash the password before storing it
     const hashedPassword = await hashPassword(department.password);
 
@@ -38,8 +38,9 @@ async function createDepartment(department) {
           phone_number,
           contact_email,
           office_location,
-          password
-        ) VALUES (?, ?, ?, ?, ?, ?)
+          password,
+          college_name
+        ) VALUES (?, ?, ?, ?, ?, ?,?)
       `;
     const result = await query(insertDepartmentSql, [
       department.department_name,
@@ -48,6 +49,7 @@ async function createDepartment(department) {
       department.contact_email,
       department.office_location,
       hashedPassword,
+      department.college_name,
     ]);
     const departmentId = result.insertId;
     await sendEmail(

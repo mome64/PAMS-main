@@ -15,6 +15,7 @@ import { useSearchParams } from "react-router-dom";
 import studentService from "../../../services/student.service";
 import Payment from "../../../pages/departments/Payment";
 import departmentService from "../../../services/department.service";
+import { useAuth } from "../../../context/AuthContext";
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -90,7 +91,7 @@ const StudentList = () => {
   const [departments, setDepartments] = useState([]);
   const studentsPerPage = 5;
   const DepartmentPerPage = 20;
-
+  const { collage } = useAuth();
   const [searchParams] = useSearchParams();
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
 
@@ -142,10 +143,15 @@ const StudentList = () => {
 
         if (response.ok) {
           const responseData = await response.json();
-          const studentsData = responseData.students.map((student, index) => ({
-            ...student,
-            id: (currentPage - 1) * studentsPerPage + index + 1,
-          }));
+          const studentsData = responseData.students
+            ?.filter(
+              (student) =>
+                student?.college_name.toLowerCase() === collage.toLowerCase()
+            )
+            .map((student, index) => ({
+              ...student,
+              id: (currentPage - 1) * studentsPerPage + index + 1,
+            }));
 
           setStudents(studentsData); // Replace data to avoid duplicates
           setTotalStudents(responseData.totalCount);

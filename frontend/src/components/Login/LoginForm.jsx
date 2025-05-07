@@ -57,7 +57,7 @@ function LoginForm() {
     try {
       const response = await loginService.logIn(formData);
       const data = await response.json();
-      console.log(data);
+      console.log(data.data.userL);
       if (response.status === 200) {
         localStorage.setItem(
           "user_token",

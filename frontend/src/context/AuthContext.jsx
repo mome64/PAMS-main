@@ -39,16 +39,20 @@ const AuthProvider = ({ children }) => {
   const [isStudent, setIsStudent] = useState(false);
   const [isCompany, setIsCompany] = useState(false);
   const [isAcadamic, setIsAcadamic] = useState(false);
+  const [collage, setCollage] = useState({});
+  const [users, setUsers] = useState({});
 
   const value = {
     isLogged,
     userRole,
+    collage,
     userId,
     username,
     secondName,
     isAdmin,
     isDepartment,
     isStudent,
+    users,
     isCompany,
     isAcadamic,
     setIsLogged,
@@ -69,6 +73,8 @@ const AuthProvider = ({ children }) => {
           setIsStudent(response.role === "Student");
           setIsCompany(response.role === "Company");
           setIsAcadamic(response.role === "acadamic");
+          setUsers(response?.userL);
+          setCollage(response?.userL?.college_name);
 
           // Extract the second name from the username and set it in state
           const secondName = response.username.split(".")[1];
@@ -84,7 +90,7 @@ const AuthProvider = ({ children }) => {
 
     fetchData();
   }, []);
-
+  console.log(users);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

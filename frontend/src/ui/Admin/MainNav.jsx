@@ -7,7 +7,8 @@ import {
   HiOutlineHome,
   HiOutlineUser,
 } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdSchool, MdBusinessCenter } from "react-icons/md";
+import { FaBuilding } from "react-icons/fa";
 
 const NavList = styled.ul`
   display: flex;
@@ -28,7 +29,6 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -53,48 +53,31 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+const navItems = [
+  { path: "/admin/dashboard", label: "Dashboard", icon: <MdDashboard /> },
+  { path: "/admin/collage", label: "Collage", icon: <MdSchool /> },
+  {
+    path: "/admin/department",
+    label: "Department",
+    icon: <HiOutlineCalendar />,
+  },
+  { path: "/admin/company", label: "Company", icon: <FaBuilding /> },
+  { path: "/admin/user", label: "Admin", icon: <HiOutlineUser /> },
+  { path: "/admin/account", label: "Profile", icon: <HiOutlineCog /> },
+];
+
 function MainNav() {
   return (
     <nav>
       <NavList>
-        <li>
-          <StyledNavLink to="/admin/dashboard">
-            <MdDashboard />
-            <span>Dashboard</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/admin/Collage">
-            <MdDashboard />
-            <span>Acadamic Dean</span>
-          </StyledNavLink>
-        </li>
-
-        <li>
-          <StyledNavLink to="/admin/department">
-            <HiOutlineCalendar />
-            <span>Department</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/admin/company">
-            <HiOutlineHome />
-            <span>Company</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/admin/user">
-            <HiOutlineUser />
-            <span>Admin</span>
-          </StyledNavLink>
-        </li>
-
-        <li>
-          <StyledNavLink to="/admin/account">
-            <HiOutlineUser />
-            <span>Profile</span>
-          </StyledNavLink>
-        </li>
+        {navItems.map(({ path, label, icon }) => (
+          <li key={path}>
+            <StyledNavLink to={path}>
+              {icon}
+              <span>{label}</span>
+            </StyledNavLink>
+          </li>
+        ))}
       </NavList>
     </nav>
   );

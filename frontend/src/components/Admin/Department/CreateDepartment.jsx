@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../ui/Button";
 import Form from "../../../ui/Form";
 import FormRow from "../../../ui/FormRow";
@@ -8,15 +8,31 @@ import CancelButton from "../../../ui/CancelButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import departmentService from "../../../services/department.service";
+import adminService from "../../../services/acadamic.service";
 
 const CreateDepartment = () => {
+  const [collage, setCollage] = useState([]);
   const [formData, setFormData] = useState({
     department_name: "",
     phone_number: "",
     contact_email: "",
     office_location: "",
     password: "",
+    collage: "",
   });
+  useEffect(() => {
+    const fetchCollage = async () => {
+      try {
+        const res = await adminService.getAllAdmins();
+        const data = await res.json();
+
+        setCollage(data.admins?.map((collage) => collage.college_name)); // Assuming you want to set the collage names
+      } catch (error) {
+        console.error("Error fetching collage data:", error);
+      }
+    };
+    fetchCollage();
+  }, []);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [errors, setErrors] = useState({});
@@ -32,6 +48,10 @@ const CreateDepartment = () => {
     // Validate department name
     if (!formData.department_name) {
       newErrors.department_name = "Department name is required";
+      valid = false;
+    }
+    if (!formData.collage) {
+      newErrors.collage = "Collage name is required";
       valid = false;
     }
 
@@ -100,6 +120,7 @@ const CreateDepartment = () => {
           contact_email: "",
           office_location: "",
           password: "",
+          collage: "",
         });
         setErrors({});
         toast.success(responseData.message, { autoClose: 2000 });
@@ -170,6 +191,22 @@ const CreateDepartment = () => {
                 onChange={handleChange}
               />
             </FormRow>
+            <FormRow label="Select Collage" error={errors.collage}>
+              <select
+                id="collage"
+                value={formData.collage}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select Collage</option>
+                {collage.map((name, index) => (
+                  <option key={index} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </FormRow>
+
             <FormRow label="Password" error={errors.password}>
               <Input
                 type="password"

@@ -198,7 +198,7 @@ const CompanyList = () => {
           }));
 
           const data = responseData.admins.length;
-          console.log(data);
+          console.log(responseData.admins);
           setCompanies(companiesData);
           setTotalCompanies(data);
           setLoading(false);
@@ -334,6 +334,7 @@ const CompanyList = () => {
                 <TableHeader>ID</TableHeader>
 
                 <TableHeader>Collage Dean Name</TableHeader>
+                <TableHeader>Collage Name</TableHeader>
                 <TableHeader>Phone Number</TableHeader>
                 <TableHeader>Contact Email</TableHeader>
                 <TableHeader>Location</TableHeader>
@@ -347,6 +348,7 @@ const CompanyList = () => {
                   <TableCell>{index + 1}</TableCell>
 
                   <TableCell>{company.full_name}</TableCell>
+                  <TableCell>{company.college_name}</TableCell>
                   <TableCell>{company.phone_number}</TableCell>
                   <TableCell>{company.email}</TableCell>
                   <TableCell>{company.location}</TableCell>

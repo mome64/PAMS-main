@@ -5,11 +5,12 @@ const getAuth = () => {
 
     if (token) {
       const decodedToken = decodeTokenPayload(token);
-      console.log(decodedToken[`${decodedToken.user_role.toLowerCase()}_id`]);
+      console.log(decodedToken.userL);
       return {
         role: decodedToken.user_role,
         userId: decodedToken[`${decodedToken.user_role.toLowerCase()}_id`],
         username: decodedToken.username,
+        userL: decodedToken.userL,
         token: token,
       };
     } else {

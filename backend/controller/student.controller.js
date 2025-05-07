@@ -34,6 +34,7 @@ async function createStudent(req, res, next) {
       photo: req.body.photo,
       password: req.body.password,
       department_id: req.body.department_id,
+      collage: req.body.collage,
     });
 
     return res.status(200).json({
@@ -313,7 +314,8 @@ async function getStudentsByDepartment(req, res, next) {
 
 async function acceptStudentApplyForm(req, res, next) {
   try {
-    const { student_id, name, disability, gender, preferences } = req.body;
+    const { student_id, name, disability, gender, preferences, collage } =
+      req.body;
 
     // Call the combined function to accept student apply form data and preferences
     await studentService.acceptStudentApplyForm({
@@ -321,6 +323,7 @@ async function acceptStudentApplyForm(req, res, next) {
       name,
       disability,
       gender,
+      collage,
       preferences,
     });
 

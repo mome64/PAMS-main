@@ -15,7 +15,7 @@ async function createDepartment(req, res, next) {
         error: "This department name already exists!",
       });
     }
-
+    console.log(req.body);
     // Create new department
     const departmentId = await departmentService.createDepartment({
       department_name: req.body.department_name,
@@ -23,6 +23,7 @@ async function createDepartment(req, res, next) {
       contact_email: req.body.contact_email,
       office_location: req.body.office_location,
       password: req.body.password,
+      college_name: req.body.collage,
     });
 
     return res.status(200).json({

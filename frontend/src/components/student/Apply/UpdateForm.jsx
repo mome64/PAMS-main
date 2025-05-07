@@ -101,7 +101,9 @@ const UpdateForm = () => {
     preferences: Array.from({ length: 0 }, () => false),
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { userId } = useAuth();
+
+  const { userId, secondName, users, collage } = useAuth();
+  console.log(userId, secondName, collage);
   const [placementGenerated, setPlacementGenerated] = useState(false);
 
   useEffect(() => {
@@ -208,6 +210,7 @@ const UpdateForm = () => {
         name: studentData.student_name,
         disability: isDisabled === "true" ? 1 : 0,
         gender,
+        collage,
         preferences: studentPreferences,
       };
 

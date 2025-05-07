@@ -31,6 +31,7 @@ const SelectContainer = styled.div`
 `;
 
 const CreateStudent = () => {
+  const { userId, collage } = useAuth();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -39,9 +40,9 @@ const CreateStudent = () => {
     gpa: "",
     password: "",
     department_id: "",
+    collage: collage,
   });
 
-  const { userId } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [departmentIds, setDepartmentIds] = useState([]);
   const [errors, setErrors] = useState({});
@@ -145,6 +146,7 @@ const CreateStudent = () => {
           gpa: "",
           password: "",
           department_id: userId,
+          collage: "",
         });
         setErrors({});
         toast.success("Student created successfully", { autoClose: 1000 });

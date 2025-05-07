@@ -8,7 +8,7 @@ const logIn = async (formData) => {
       body: JSON.stringify(formData),
     };
     const response = await fetch(`${api_url}/api/login`, requestOptions);
-   
+    console.log(response);
     return response;
   } catch (error) {
     console.error("Login failed:", error.message);

@@ -175,7 +175,7 @@ const DepartmentList = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const DepartmentPerPage = 5;
+  const DepartmentPerPage = 25;
 
   const [searchParams] = useSearchParams();
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
@@ -306,11 +306,16 @@ const DepartmentList = () => {
   };
 
   const filterDepartments = (department) => {
-    const { department_name, phone_number, contact_email, office_location } =
-      department;
-
+    const {
+      department_name,
+      phone_number,
+      contact_email,
+      office_location,
+      college_name,
+    } = department;
     return (
       department_name.toLowerCase().includes(searchText) ||
+      college_name.toLowerCase().includes(searchText) ||
       phone_number.toLowerCase().includes(searchText) ||
       contact_email.toLowerCase().includes(searchText) ||
       office_location.toLowerCase().includes(searchText)
@@ -361,6 +366,7 @@ const DepartmentList = () => {
               <TableRow>
                 <TableHeader>ID</TableHeader>
                 <TableHeader>Department Name</TableHeader>
+                <TableHeader>Collage Name</TableHeader>
                 <TableHeader>Phone Number</TableHeader>
                 <TableHeader>Contact Email</TableHeader>
                 <TableHeader>Office Location</TableHeader>
@@ -372,6 +378,7 @@ const DepartmentList = () => {
                 <TableRow key={department.department_id}>
                   <TableCell>{department.id}</TableCell>
                   <TableCell>{department.department_name}</TableCell>
+                  <TableCell>{department.college_name.toUpperCase()}</TableCell>
                   <TableCell>{department.phone_number}</TableCell>
                   <TableCell>{department.contact_email}</TableCell>
                   <TableCell>{department.office_location}</TableCell>

@@ -179,11 +179,19 @@ const acceptStudentApplyForm = async ({
   disability,
   gender,
   preferences,
+  collage,
 }) => {
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ student_id, name, disability, gender, preferences }),
+    body: JSON.stringify({
+      student_id,
+      name,
+      disability,
+      gender,
+      preferences,
+      collage,
+    }),
   };
   const response = await fetch(`${api_url}/api/student/apply`, requestOptions);
   return response;

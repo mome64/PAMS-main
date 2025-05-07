@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import studentService from "../../../services/student.service";
 import departmentService from "../../../services/department.service";
+import { useAuth } from "../../../context/AuthContext";
 
 // Styled Components
 const PrintButton = styled.button`
@@ -46,7 +47,7 @@ const ApplyStudentList = ({ showCompany }) => {
   const [data, setData] = useState([]);
   const printRef = useRef();
   const [departments, setDepartments] = useState([]);
-
+  const { collage } = useAuth();
   useEffect(() => {
     fetchData();
   }, []);
@@ -75,12 +76,15 @@ const ApplyStudentList = ({ showCompany }) => {
         if (response.ok) {
           const responseData = await response.json();
 
-          const departmentsData = responseData.departments?.map(
-            (department, index) => ({
+          const departmentsData = responseData.departments
+            ?.filter(
+              (department) =>
+                department?.college_name.toLowerCase() === collage.toLowerCase()
+            )
+            .map((department, index) => ({
               ...department,
               id: (page - 1) * DepartmentPerPage + index + 1,
-            })
-          );
+            }));
 
           setDepartments(departmentsData);
         } else {
@@ -96,8 +100,12 @@ const ApplyStudentList = ({ showCompany }) => {
   const fetchData = async () => {
     try {
       const response = await studentService.getAllApplyStudents();
+      console.log(response);
       if (response?.students) {
-        setData(response.students);
+        const filteredStudents = response.students?.filter(
+          (student) => student.college_name.toLowerCase() === collage.toLowerCase()
+        );
+        setData(filteredStudents);
       }
     } catch (error) {
       console.error("Error fetching data:", error);

@@ -94,9 +94,9 @@ const StudentPlacementForm = () => {
     preferences: Array.from({ length: 0 }, () => false),
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { userId, secondName } = useAuth();
   const navigate = useNavigate();
-
+  const { userId, secondName, users, collage } = useAuth();
+  console.log(userId, secondName, collage);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -205,8 +205,9 @@ const StudentPlacementForm = () => {
         disability: isDisabled === "true",
         gender,
         preferences: studentPreferences,
+        collage: collage,
       };
-
+      console.log(formData);
       try {
         await studentService.acceptStudentApplyForm(formData);
         // Clear error state and remove red border on successful submission

@@ -44,11 +44,11 @@ async function logIn(req, res, next) {
 
     userIdKey = user.key;
 
-    console.log(user);
     const payload = {
       [userIdKey]: user.id,
       user_role: role,
       username: username,
+      userL: user.user,
     };
 
     const token = jwt.sign(payload, jwtSecret, {
@@ -60,6 +60,7 @@ async function logIn(req, res, next) {
       data: {
         message: "User logged in successfully",
         user_token: token,
+        userL: user.user,
       },
     });
   } catch (error) {
