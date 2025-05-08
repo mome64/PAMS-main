@@ -103,8 +103,8 @@ function Dashboard() {
   const [numSendResults, setNumSendResults] = useState(0);
   const [chartData, setChartData] = useState([]);
 
-  const { userId } = useAuth();
-  console.log(userId);
+  const { userId, collage } = useAuth();
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -121,7 +121,14 @@ function Dashboard() {
           const companyData = await companyResponse.json();
           const studentData = await studentResponse.json();
 
-          setNumCompanies(companyData.companies.length);
+          const normalizedCollage =
+            typeof collage === "string" ? collage.toLowerCase() : "";
+
+          const filteredCompanies = companyData.companies.filter(
+            (company) =>
+              company.college_name.toLowerCase() === normalizedCollage
+          );
+          setNumCompanies(filteredCompanies.length);
           setNumStudents(studentData.length);
           setNumSendResults(resultResponse.length);
 
@@ -160,7 +167,7 @@ function Dashboard() {
           <IconContainer>
             <MdBusiness />
           </IconContainer>
-          <StyledLink to="/department/companies">View Companies</StyledLink>
+          <StyledLink to="/department/company">View Companies</StyledLink>
         </Box>
         <Box>
           <Heading as="h2">Students Who Sent Results</Heading>

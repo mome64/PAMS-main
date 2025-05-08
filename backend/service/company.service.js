@@ -35,8 +35,9 @@ async function createCompany(company) {
           industry_sector,
           accepted_student_limit,
           website,
-          password
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          password,
+          college_name
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
       `;
     const result = await query(insertCompanySql, [
       company.company_name,
@@ -48,6 +49,7 @@ async function createCompany(company) {
       company.accepted_student_limit,
       company.website,
       hashedPassword,
+      company.collage,
     ]);
     const companyId = result.insertId;
 

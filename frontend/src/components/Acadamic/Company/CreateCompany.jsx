@@ -8,8 +8,10 @@ import Modal from "../../../ui/Modal";
 import companyService from "../../../services/company.service";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/AuthContext";
 const CreateCompany = () => {
+  const { collage } = useAuth();
+  console.log(collage);
   const [formData, setFormData] = useState({
     company_name: "",
     phone_number: "",
@@ -18,6 +20,7 @@ const CreateCompany = () => {
     industry_sector: "",
     accepted_student_limit: "",
     password: "",
+    collage: collage,
   });
 
   const [modalVisible, setModalVisible] = useState(false);

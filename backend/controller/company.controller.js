@@ -25,6 +25,7 @@ async function createCompany(req, res, next) {
       accepted_student_limit: req.body.accepted_student_limit,
       website: req.body.website,
       password: req.body.password,
+      collage: req.body.collage,
     });
 
     // Return success response

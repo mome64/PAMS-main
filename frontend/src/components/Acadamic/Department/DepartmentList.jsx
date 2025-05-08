@@ -198,10 +198,13 @@ const DepartmentList = () => {
         if (response.ok) {
           const responseData = await response.json();
 
+          const normalizedCollage =
+            typeof collage === "string" ? collage.toLowerCase() : "";
+
           const departmentsData = responseData.departments
             ?.filter(
               (department) =>
-                department?.college_name.toLowerCase() === collage.toLowerCase()
+                department?.college_name.toLowerCase() === normalizedCollage
             )
             .map((department, index) => ({
               ...department,

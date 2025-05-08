@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../ui/Button";
 import Form from "../../../ui/Form";
 import FormRow from "../../../ui/FormRow";
@@ -8,8 +8,10 @@ import Modal from "../../../ui/Modal";
 import companyService from "../../../services/company.service";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import adminService from "../../../services/acadamic.service";
 
 const CreateCompany = () => {
+  const [collage, setCollage] = useState([]);
   const [formData, setFormData] = useState({
     company_name: "",
     phone_number: "",
@@ -18,8 +20,22 @@ const CreateCompany = () => {
     industry_sector: "",
     accepted_student_limit: "",
     password: "",
+    collage: "",
   });
+  useEffect(() => {
+    const fetchCollage = async () => {
+      try {
+        const res = await adminService.getAllAdmins();
+        const data = await res.json();
 
+        setCollage(data.admins?.map((collage) => collage.college_name)); // Assuming you want to set the collage names
+      } catch (error) {
+        console.error("Error fetching collage data:", error);
+      }
+    };
+    fetchCollage();
+  }, []);
+  console.log(collage);
   const [modalVisible, setModalVisible] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -118,6 +134,7 @@ const CreateCompany = () => {
           accepted_student_limit: "",
           website: "",
           password: "",
+          collage: "",
         });
         setErrors({});
         toast.success(responseData.message, { autoClose: 2000 });
@@ -202,6 +219,22 @@ const CreateCompany = () => {
                 onChange={handleChange}
               />
             </FormRow>
+            <FormRow label="Select Collage" error={errors.collage}>
+              <select
+                id="collage"
+                value={formData.collage}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select Collage</option>
+                {collage.map((name, index) => (
+                  <option key={index} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </FormRow>
+
             <FormRow
               label="Accepted Student Limit"
               error={errors.accepted_student_limit}

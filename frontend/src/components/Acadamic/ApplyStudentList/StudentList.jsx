@@ -142,9 +142,15 @@ const StudentList = () => {
 
         if (response.ok) {
           const responseData = await response.json();
-          const Col = collage.toLowerCase();
+
+          const normalizedCollage =
+            typeof collage === "string" ? collage.toLowerCase() : "";
+
           const studentsData = responseData.students
-            ?.filter((student) => student?.college_name.toLowerCase() === Col)
+            ?.filter(
+              (student) =>
+                student?.college_name.toLowerCase() === normalizedCollage
+            )
             .map((student, index) => ({
               ...student,
               id: (currentPage - 1) * studentsPerPage + index + 1,

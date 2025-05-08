@@ -94,7 +94,7 @@ const ChartBox = styled(Box)`
 `;
 
 function Dashboard() {
-  const { userId, userRole } = useAuth();
+  const { userId, userRole, collage } = useAuth();
   console.log(userId, userRole);
 
   const [numDepartments, setNumDepartments] = useState(0);
@@ -131,12 +131,26 @@ function Dashboard() {
         const companyData = await companyResponse.json();
         const studentData = await studentResponse.json();
         const adminData = await adminResponse.json();
+        const normalizedCollage =
+          typeof collage === "string" ? collage.toLowerCase() : "";
+
+        const filteredCompanies = companyData.companies.filter(
+          (company) => company.college_name.toLowerCase() === normalizedCollage
+        );
+        setNumCompanies(filteredCompanies.length);
 
         setNumDepartments(departmentData.totalCount);
-        setNumCompanies(companyData.companies.length);
-        setNumStudents(studentData.students.length);
+
+        const filterApplyStud = applyStudentResponse.students.filter(
+          (stud) => stud.college_name.toLowerCase() === normalizedCollage
+        );
+
+        setNumApplyStudents(filterApplyStud.length);
+        const filterStud = studentData.students.filter(
+          (stud) => stud.college_name.toLowerCase() === normalizedCollage
+        );
+        setNumStudents(filterStud.length);
         setNumAdmins(adminData.admins.length);
-        setNumApplyStudents(applyStudentResponse.students.length);
       } else {
         console.error("Failed to fetch dashboard data");
       }
@@ -153,7 +167,7 @@ function Dashboard() {
 
   const chartData = [
     { name: "Departments", value: numDepartments },
-    { name: "Companies", value: numCompanies },
+
     { name: "Students", value: numStudents },
     { name: "Applied", value: numApplyStudents },
   ];
@@ -176,20 +190,6 @@ function Dashboard() {
                 <MdSchool size={24} color="#00b894" />
               </IconContainer>
               <StyledLink to="/acadamic/department">See detail</StyledLink>
-            </>
-          )}
-        </Box>
-
-        <Box>
-          <Heading as="h2">Number of Companies</Heading>
-          {loadingCompanies ? (
-            <Spinner />
-          ) : (
-            <>
-              <h3>{numCompanies}</h3>
-              <IconContainer>
-                <MdBusiness size={24} color="#0984e3" />
-              </IconContainer>
             </>
           )}
         </Box>

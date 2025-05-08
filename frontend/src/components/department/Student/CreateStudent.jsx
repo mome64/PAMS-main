@@ -295,11 +295,15 @@ const CreateStudent = () => {
                 onChange={handleChange}
               />
             </FormRow>
-            <FormRow label="Department" error={errors.department_id}>
+            <FormRow
+              label="Department"
+              error={errors.department_id}
+              style={{ display: "none" }}
+            >
               <Input
                 type="text"
                 id="department_id"
-                value={formData.department_id}
+                value={collage}
                 onChange={handleChange}
                 disabled
               />

@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Pagination from "../../../ui/Pagination";
 import TableType from "../../../ui/TabelType";
 import { useSearchParams } from "react-router-dom";
-
+import { useAuth } from "../../../context/AuthContext";
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -169,6 +169,7 @@ const ConfirmationDialog = ({ message, onConfirm, onCancel, show }) => {
 };
 
 const CompanyList = () => {
+  const { collage } = useAuth();
   const [companies, setCompanies] = useState([]);
   const [totalcompanies, setTotalCompanies] = useState(0);
   const [searchText, setSearchText] = useState("");
@@ -178,7 +179,7 @@ const CompanyList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const companiesPerPage = 5;
+  const companiesPerPage = 35;
 
   const [searchParams] = useSearchParams();
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
@@ -193,15 +194,20 @@ const CompanyList = () => {
         );
 
         await new Promise((resolve) => setTimeout(resolve, 400));
-
         if (response.ok) {
           const responseData = await response.json();
-          const companiesData = responseData.companies.map(
-            (company, index) => ({
+          const normalizedCollage =
+          typeof collage === "string" ? collage.toLowerCase() : "";
+
+          const companiesData = responseData.companies
+            ?.filter(
+              (company) =>
+                company?.college_name.toLowerCase() === normalizedCollage
+            )
+            .map((company, index) => ({
               ...company,
               id: (page - 1) * companiesPerPage + index + 1,
-            })
-          );
+            }));
 
           const data = responseData.totalCount;
 
