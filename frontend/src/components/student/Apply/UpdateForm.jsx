@@ -149,7 +149,14 @@ const UpdateForm = () => {
         if (response.ok) {
           const data = await response.json();
           if (data && data.companies) {
-            setCompanies(data.companies);
+            const normalizedCollage =
+              typeof collage === "string" ? collage.toLowerCase() : "";
+
+            setCompanies(
+              data.companies.filter(
+                (comp) => comp.college_name.toLowerCase() === normalizedCollage
+              )
+            );
           } else {
             console.error("Failed to fetch companies:", data);
           }

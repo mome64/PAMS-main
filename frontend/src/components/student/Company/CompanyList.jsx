@@ -11,6 +11,7 @@ import Heading from "../../../ui/Heading";
 import Spinner from "../../../ui/Spinner";
 import styled from "styled-components";
 
+import { useAuth } from "../../../context/AuthContext";
 const GeneralContainer = styled.div`
   background-color: var(--color-grey-200);
   min-height: 100vh;
@@ -19,6 +20,7 @@ const GeneralContainer = styled.div`
 `;
 
 function FeaturedJobs() {
+  const { collage } = useAuth();
   const [companyData, setCompanyData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,9 +35,16 @@ function FeaturedJobs() {
           console.log("gggggggg", response);
 
           if (response.ok) {
-            const data = await response.json();
+            const normalizedCollage =
+              typeof collage === "string" ? collage.toLowerCase() : "";
 
-            setCompanyData(data.companies);
+            const data = await response.json();
+            const filterdComp = data.companies.filter(
+              (comp) =>
+                comp.college_name.toLowerCase() === normalizedCollage
+            );
+
+            setCompanyData(filterdComp);
           } else {
             console.error("Failed to fetch data");
           }

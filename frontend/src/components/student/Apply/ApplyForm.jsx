@@ -96,7 +96,7 @@ const StudentPlacementForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
   const { userId, secondName, users, collage } = useAuth();
-  console.log(userId, secondName, collage);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -105,14 +105,28 @@ const StudentPlacementForm = () => {
         if (response.ok) {
           const data = await response.json();
           if (data && data.companies) {
+            const normalizedCollage =
+              typeof collage === "string" ? collage.toLowerCase() : "";
+
             setCompanies(
-              data.companies.map((company) => ({
-                ...company,
-                disabled: Array.from({ length: 1 }, () => false),
-              }))
+              data.companies
+                .filter(
+                  (comp) =>
+                    comp.college_name.toLowerCase() === normalizedCollage
+                )
+                .map((company) => ({
+                  ...company,
+                  disabled: Array.from({ length: 1 }, () => false),
+                }))
             );
+
             const initialStudentPreferences = Array.from(
-              { length: data.companies.length },
+              {
+                length: data.companies.filter(
+                  (comp) =>
+                    comp.college_name.toLowerCase() === normalizedCollage
+                ).length,
+              },
               () => ""
             );
             setStudentPreferences(initialStudentPreferences);
@@ -147,6 +161,7 @@ const StudentPlacementForm = () => {
         return preference;
       }
     );
+    console.log(updatedStudentPreferences);
     setStudentPreferences(updatedStudentPreferences);
 
     // Disable the selected company in other dropdowns
@@ -175,6 +190,7 @@ const StudentPlacementForm = () => {
     const areAllPreferencesSelected = studentPreferences.every(
       (preference) => preference !== ""
     );
+    console.log(studentPreferences);
 
     // Update error state
     setErrors({
