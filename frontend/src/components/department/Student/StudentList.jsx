@@ -314,9 +314,9 @@ const StudentList = () => {
                 <TableHeader>Contact Email</TableHeader>
                 <TableHeader>Gpa</TableHeader>
 
-                <TableHeader>Action</TableHeader>
                 <TableHeader>Progress</TableHeader>
                 <TableHeader>Payment Status</TableHeader>
+                <TableHeader>Action</TableHeader>
               </TableRow>
             </TableHead>
             <tbody>
@@ -330,6 +330,18 @@ const StudentList = () => {
                   <TableCell>{student.gpa}</TableCell>
 
                   <TableCell>
+                    <button onClick={() => HandleProgress(student)}>
+                      Progress
+                    </button>
+                  </TableCell>
+                  <TableCell>
+                    <Payment
+                      bg={"cursor-not-allowed"} // green if paid, red if not
+                      disabled={true} // disable if already paid
+                      student={student}
+                    />
+                  </TableCell>
+                  <TableCell>
                     <ActionsWrapper>
                       <IconButton
                         onClick={() => handleEdit(student.student_id)}
@@ -342,18 +354,6 @@ const StudentList = () => {
                         <DeleteIcon />
                       </IconButton>
                     </ActionsWrapper>
-                  </TableCell>
-                  <TableCell>
-                    <button onClick={() => HandleProgress(student)}>
-                      Progress
-                    </button>
-                  </TableCell>
-                  <TableCell>
-                    <Payment
-                      bg={"cursor-not-allowed"} // green if paid, red if not
-                      disabled={true} // disable if already paid
-                      student={student}
-                    />
                   </TableCell>
                 </TableRow>
               ))}

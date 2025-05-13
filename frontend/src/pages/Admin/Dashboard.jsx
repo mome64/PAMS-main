@@ -255,15 +255,14 @@ function Dashboard() {
         <Heading as="h2" className="text-xl font-semibold mb-6">
           Dashboard Data Overview
         </Heading>
-        <div className="flex justify-between gap-10 place-items-center">
+        <div className="flex justify-between gap-4 place-items-center">
           {/* Bar Chart */}
-          <div className="flex-1 min-w-[300px]">
+          <div className="flex-1 max-w-[400px]">
             <Bar data={chartData} options={{ responsive: true }} />
           </div>
 
           {/* Pie Chart */}
-          <div className="flex-1 min-w-[250px]">
-           
+          <div className="flex-1 max-w-[400px]">
             <Pie data={pieChartData} options={{ responsive: true }} />
           </div>
         </div>

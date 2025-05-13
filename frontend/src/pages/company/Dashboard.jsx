@@ -84,7 +84,7 @@ function CompanyDashboard() {
         if (companyResponse.ok && studentResponse.ok) {
           const companyData = await companyResponse.json();
           const studentData = await studentResponse.json();
-
+          console.log(studentData);
           setNumCompanies(companyData.companies.length);
           setNumStudents(studentData.length);
           setNumResults(companyData.results.length); // Example to handle result data

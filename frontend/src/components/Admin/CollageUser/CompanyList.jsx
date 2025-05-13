@@ -292,7 +292,26 @@ const CompanyList = () => {
       console.error("Error fetching companies:", error);
     }
   };
+  const filterCompanies = (companies) => {
+    const {
+      full_name,
+      phone_number,
+      email,
 
+      college_name,
+    } = companies;
+    return (
+      full_name.toLowerCase().includes(searchText) ||
+      college_name.toLowerCase().includes(searchText) ||
+      phone_number.toLowerCase().includes(searchText) ||
+      email.toLowerCase().includes(searchText)
+    );
+  };
+
+  const filterdCompanies = searchText
+    ? companies.filter(filterCompanies)
+    : companies;
+  console.log(filterdCompanies);
   return (
     <>
       <ConfirmationDialog
@@ -312,7 +331,7 @@ const CompanyList = () => {
           type="text"
           value={searchText}
           onChange={handleSearchTextChange}
-          placeholder="Search by company name, email, phone and industry sector"
+          placeholder="Search by Collage name, email, phone "
         />
         <CiSearch
           style={{
@@ -343,7 +362,7 @@ const CompanyList = () => {
               </TableRow>
             </TableHead>
             <tbody>
-              {companies.map((company, index) => (
+              {filterdCompanies.map((company, index) => (
                 <TableRow key={company.acadamic_id}>
                   <TableCell>{index + 1}</TableCell>
 

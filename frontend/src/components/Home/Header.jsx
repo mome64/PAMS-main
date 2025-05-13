@@ -83,7 +83,9 @@ const Header = () => {
         <LeftContainer>
           <Logo src="/logo-light.png" alt="IPS" />
           <HeadingContainer>
-            <HeadingText>Placement Portal</HeadingText>
+            <HeadingText>
+              Student Practical Attachement Placement Portal
+            </HeadingText>
           </HeadingContainer>
         </LeftContainer>
       </NavLink>
