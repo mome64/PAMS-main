@@ -197,7 +197,7 @@ const CompanyList = () => {
         if (response.ok) {
           const responseData = await response.json();
           const normalizedCollage =
-          typeof collage === "string" ? collage.toLowerCase() : "";
+            typeof collage === "string" ? collage.toLowerCase() : "";
 
           const companiesData = responseData.companies
             ?.filter(
@@ -307,6 +307,22 @@ const CompanyList = () => {
     }
   };
 
+  console.log(companies);
+  const filtercompanies = (companies) => {
+    const { company_name, location, contact_email, phone_number } = companies;
+
+    return (
+      company_name.toLowerCase().includes(searchText) ||
+      location.toLowerCase().includes(searchText) ||
+      contact_email.toLowerCase().includes(searchText) ||
+      phone_number.toLowerCase().includes(searchText)
+    );
+  };
+
+  const filteredcompanies = searchText
+    ? companies.filter(filtercompanies)
+    : companies;
+
   return (
     <>
       <ConfirmationDialog
@@ -355,7 +371,7 @@ const CompanyList = () => {
               </TableRow>
             </TableHead>
             <tbody>
-              {companies.map((company) => (
+              {filteredcompanies.map((company) => (
                 <TableRow key={company.company_id}>
                   <TableCell>{company.id}</TableCell>
                   <TableCell>{company.company_name}</TableCell>

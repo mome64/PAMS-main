@@ -207,7 +207,7 @@ const StudentList = () => {
   }
   useEffect(() => {
     fetchStudents();
-  }, [userId]);
+  }, [userId, students]);
 
   const handleSearchTextChange = (event) => {
     const searchText = event.target.value.toLowerCase();

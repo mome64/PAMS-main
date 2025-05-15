@@ -192,6 +192,7 @@ const CreateStudent = () => {
             gpa: student.gpa || "",
             password: student.password || "default123",
             department_id: userId,
+            collage: collage,
           };
 
           const response = await studentService.createStudent(formattedStudent);

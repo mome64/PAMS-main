@@ -229,7 +229,10 @@ const GradeMake = () => {
               const isValidCompany = !isNaN(companyResult);
 
               const total =
-                isValidAcademic && isValidCompany && companyResult !== null
+                isValidAcademic &&
+                isValidCompany &&
+                companyResult !== null &&
+                academicResult !== null
                   ? Number(academicResult) + Number(companyResult)
                   : null;
 
@@ -258,29 +261,32 @@ const GradeMake = () => {
 
                   {/* Academic Result */}
                   <TableCell>
-                    {academicResult !== undefined ? (
+                    {console.log(academicResult, companyResult)}
+                    {academicResult !== undefined && academicResult !== null ? (
                       <p>{academicResult}</p>
                     ) : isSubmitted ? (
                       <p>{inputValue}%</p>
                     ) : (
-                      <>
-                        <input
-                          className="border"
-                          type="text"
-                          placeholder=" Enter..."
-                          value={inputValue}
-                          onChange={(e) =>
-                            handleScoreChange(
-                              student.student_id,
-                              e.target.value
-                            )
-                          }
-                          style={{ width: "60px", padding: "4px" }}
-                        />
-                        {errorMessage && (
-                          <ErrorMessage>{errorMessage}</ErrorMessage>
-                        )}
-                      </>
+                      companyResult && (
+                        <>
+                          <input
+                            className="border"
+                            type="text"
+                            placeholder=" Enter..."
+                            value={inputValue}
+                            onChange={(e) =>
+                              handleScoreChange(
+                                student.student_id,
+                                e.target.value
+                              )
+                            }
+                            style={{ width: "60px", padding: "4px" }}
+                          />
+                          {errorMessage && (
+                            <ErrorMessage>{errorMessage}</ErrorMessage>
+                          )}
+                        </>
+                      )
                     )}
                   </TableCell>
 
@@ -307,6 +313,7 @@ const GradeMake = () => {
                   <TableCell>
                     {!academicResult && !isSubmitted ? (
                       <button
+                        className="bg-amber-200 text-black p-2 rounded-2xl"
                         onClick={() => submitScore(student.student_id)}
                         disabled={!isValidScore(inputValue)}
                       >

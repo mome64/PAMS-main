@@ -61,7 +61,7 @@ const ResultType = () => {
             <Button>Placement Results</Button>
           </Link>
           <Link to="/department/student-organizational-results">
-            <Button>Company Results</Button>
+            <Button>Evaluation Results</Button>
           </Link>
         </ButtonContainer>
       </Container>
