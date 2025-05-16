@@ -20,13 +20,17 @@ const CreateDepartment = () => {
     password: "",
     collage: "",
   });
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
   useEffect(() => {
     const fetchCollage = async () => {
       try {
         const res = await adminService.getAllAdmins();
         const data = await res.json();
-
-        setCollage(data.admins?.map((collage) => collage.college_name)); // Assuming you want to set the collage names
+        setCollage(data.admins?.map((collage) => collage.college_name));
       } catch (error) {
         console.error("Error fetching collage data:", error);
       }
@@ -34,85 +38,184 @@ const CreateDepartment = () => {
     fetchCollage();
   }, []);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [errors, setErrors] = useState({});
+  const validateField = (name, value) => {
+    switch (name) {
+      case "department_name":
+        if (!value.trim()) return "Department name is required";
+        if (!/^[A-Za-z\s\-']+$/.test(value))
+          return "Department name can only contain letters, spaces";
+        if (value.length < 3)
+          return "Department name must be at least 3 characters";
+        return "";
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
+      case "phone_number":
+        if (!value.trim()) return "Phone number is required";
+        const cleanedValue = value.replace(/[^\d+]/g, "");
+        const isMobile = /^(09|\+2519)\d{8}$/.test(cleanedValue);
+        const isFixedLine = /^(7|2517)\d{6,9}$/.test(cleanedValue);
+
+        if (!isMobile && !isFixedLine) {
+          return "Invalid Phone number. ";
+        }
+
+        if (isMobile) {
+          if (
+            (cleanedValue.startsWith("09") && cleanedValue.length !== 10) ||
+            (cleanedValue.startsWith("+2519") && cleanedValue.length !== 14)
+          ) {
+            return cleanedValue.startsWith("09")
+              ? "Local mobile must be 10 digits (09XXXXXXXX)"
+              : "International mobile must be 13 digits (+2519XXXXXXXX)";
+          }
+        } else {
+          if (
+            (cleanedValue.startsWith("7") && cleanedValue.length !== 7) ||
+            (cleanedValue.startsWith("2517") && cleanedValue.length !== 12)
+          ) {
+            return cleanedValue.startsWith("7")
+              ? "Local fixed line must be 7 digits (7XXXXXXX)"
+              : "International fixed must be 12 digits (+2517XXXXXXX)";
+          }
+        }
+        return "";
+
+      case "contact_email":
+        if (!value.trim()) return "Contact email is required";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Invalid email format";
+        if (!value.toLowerCase().endsWith("@gmail.com"))
+          return "Only @gmail.com addresses are accepted";
+        return "";
+
+      case "office_location":
+        if (!value.trim()) return "Office location is required";
+        if (!/^[A-Za-z0-9\s\-,.]+$/.test(value))
+          return "Office location can only contain letters, numbers, spaces";
+        return "";
+
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        if (!/[A-Z]/.test(value))
+          return "Password must contain at least one uppercase letter";
+        if (!/[a-z]/.test(value))
+          return "Password must contain at least one lowercase letter";
+        if (!/[0-9]/.test(value))
+          return "Password must contain at least one number";
+
+        return "";
+
+      case "collage":
+        if (!value.trim()) return "College selection is required";
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { id } = e.target;
+    setTouched((prev) => ({ ...prev, [id]: true }));
+    const errorMessage = validateField(id, formData[id]);
+    setErrors((prevErrors) => ({ ...prevErrors, [id]: errorMessage }));
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    // Special handling for phone number formatting
+    if (id === "phone_number") {
+      // Remove all non-digit characters except '+'
+      const cleanedValue = value.replace(/[^\d+]/g, "");
+
+      // Format with spaces for better readability
+      let formattedValue = cleanedValue;
+      if (cleanedValue.startsWith("09") && cleanedValue.length > 2) {
+        formattedValue = `09${cleanedValue.slice(2, 5)}`;
+        if (cleanedValue.length > 5)
+          formattedValue += ` ${cleanedValue.slice(5, 9)}`;
+        if (cleanedValue.length > 9)
+          formattedValue += ` ${cleanedValue.slice(9)}`;
+      } else if (cleanedValue.startsWith("+2519") && cleanedValue.length > 5) {
+        formattedValue = `+2519 ${cleanedValue.slice(
+          5,
+          8
+        )} ${cleanedValue.slice(8, 12)}`;
+      } else if (cleanedValue.startsWith("7") && cleanedValue.length > 1) {
+        formattedValue = `7${cleanedValue.slice(1, 4)}`;
+        if (cleanedValue.length > 4)
+          formattedValue += ` ${cleanedValue.slice(4, 7)}`;
+      }
+
+      setFormData((prev) => ({ ...prev, [id]: formattedValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [id]: value }));
+    }
+
+    // Validate if the field has been touched
+    if (touched[id]) {
+      const errorMessage = validateField(
+        id,
+        id === "phone_number" ? formData[id].replace(/[^\d+]/g, "") : value
+      );
+      setErrors((prevErrors) => ({ ...prevErrors, [id]: errorMessage }));
+    }
   };
 
   const validateForm = () => {
-    let valid = true;
     const newErrors = {};
+    let isValid = true;
 
-    // Validate department name
-    if (!formData.department_name) {
-      newErrors.department_name = "Department name is required";
-      valid = false;
-    }
-    if (!formData.collage) {
-      newErrors.collage = "Collage name is required";
-      valid = false;
-    }
-
-    // Validate phone number
-    if (!formData.phone_number) {
-      newErrors.phone_number = "Phone number is required";
-      valid = false;
-    }
-
-    // Validate contact email
-    if (!formData.contact_email) {
-      newErrors.contact_email = "Contact email is required";
-      valid = false;
-    } else if (!isValidEmail(formData.contact_email)) {
-      newErrors.contact_email = "Invalid email format";
-      valid = false;
-    }
-
-    // Validate office location
-    if (!formData.office_location) {
-      newErrors.office_location = "Office location is required";
-      valid = false;
-    }
-
-    // Validate password
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-      valid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long";
-      valid = false;
-    }
+    Object.keys(formData).forEach((key) => {
+      const value =
+        key === "phone_number"
+          ? formData[key].replace(/[^\d+]/g, "")
+          : formData[key];
+      const errorMessage = validateField(key, value);
+      if (errorMessage) isValid = false;
+      newErrors[key] = errorMessage;
+    });
 
     setErrors(newErrors);
-    return valid;
+    setTouched(
+      Object.keys(formData).reduce((acc, key) => {
+        acc[key] = true;
+        return acc;
+      }, {})
+    );
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      toast.error("Please fix the errors in the form", { autoClose: 2000 });
       return;
     }
 
     try {
-      // Send post request to create department
-      const response = await departmentService.createDepartment(formData);
+      // Prepare data with clean phone number
+      const submitData = {
+        ...formData,
+        phone_number: formData.phone_number.replace(/[^\d+]/g, ""),
+      };
+
+      const response = await departmentService.createDepartment(submitData);
 
       if (response.status === 400) {
-        // If department name already exists
-        const responseData = await response.json();
-        toast.error(responseData.error, { autoClose: 1000 });
+        const data = await response.json();
+        toast.error(data.error, { autoClose: 1000 });
         return;
       }
 
       if (!response.ok) {
-        toast.error("Failed to create department", { autoClose: 1000 });
+        toast.error("Failed to create department", { autoClose: 2000 });
         return;
       }
 
-      const responseData = await response.json();
+      const data = await response.json();
       if (response.status === 200) {
         setFormData({
           department_name: "",
@@ -123,27 +226,22 @@ const CreateDepartment = () => {
           collage: "",
         });
         setErrors({});
-        toast.success(responseData.message, { autoClose: 2000 });
+        setTouched({});
+        toast.success(data.message, { autoClose: 2000 });
       }
 
       setModalVisible(false);
     } catch (error) {
-      // Show error message using toast notification
-      toast.error("Error creating department.", { autoClose: 2000 });
+      toast.error("Error creating department: " + error.message, {
+        autoClose: 2000,
+      });
     }
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
-  };
-
-  const isValidEmail = (email) => {
-    // Email validation logic
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setErrors({});
+    setTouched({});
   };
 
   return (
@@ -162,24 +260,33 @@ const CreateDepartment = () => {
                 autoComplete="on"
                 value={formData.department_name}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={errors.department_name}
+                placeholder="Enter department name"
               />
             </FormRow>
             <FormRow label="Phone Number" error={errors.phone_number}>
               <Input
-                type="number"
+                type="text"
                 id="phone_number"
                 autoComplete="on"
                 value={formData.phone_number}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={errors.phone_number}
+                placeholder="Enter Phone ... "
               />
             </FormRow>
             <FormRow label="Contact Email" error={errors.contact_email}>
               <Input
-                type="text"
+                type="email"
                 id="contact_email"
                 autoComplete="on"
                 value={formData.contact_email}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={errors.contact_email}
+                placeholder="example@domain.com"
               />
             </FormRow>
             <FormRow label="Office Location" error={errors.office_location}>
@@ -189,16 +296,22 @@ const CreateDepartment = () => {
                 autoComplete="on"
                 value={formData.office_location}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={errors.office_location}
+                placeholder="Building name, room number"
               />
             </FormRow>
-            <FormRow label="Select Collage" error={errors.collage}>
+            <FormRow label="Select College" error={errors.collage}>
               <select
                 id="collage"
                 value={formData.collage}
                 onChange={handleChange}
-                className="w-full p-2 border rounded-md"
+                onBlur={handleBlur}
+                className={`w-full p-2 border rounded-md ${
+                  errors.collage ? "border-red-500" : ""
+                }`}
               >
-                <option value="">Select Collage</option>
+                <option value="">Select College</option>
                 {collage.map((name, index) => (
                   <option key={index} value={name}>
                     {name}
@@ -206,7 +319,6 @@ const CreateDepartment = () => {
                 ))}
               </select>
             </FormRow>
-
             <FormRow label="Password" error={errors.password}>
               <Input
                 type="password"
@@ -214,6 +326,9 @@ const CreateDepartment = () => {
                 autoComplete="off"
                 value={formData.password}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={errors.password}
+                placeholder="At least 8 characters with mixed case, numbers, and symbols"
               />
             </FormRow>
             <div

@@ -17,7 +17,7 @@ const HeaderContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 100px;
+  width: 60px;
 `;
 
 const LeftContainer = styled.div`
@@ -81,10 +81,10 @@ const Header = () => {
     <HeaderContainer>
       <NavLink to="/">
         <LeftContainer>
-          <Logo src="/logo-light.png" alt="IPS" />
+          <Logo src="/logo.png" style={{ marginRight: 15 }} alt="IPS" />
           <HeadingContainer>
             <HeadingText>
-              Student Practical Attachement Placement Portal
+              HU - Student Practical Attachement Placement Portal
             </HeadingText>
           </HeadingContainer>
         </LeftContainer>
