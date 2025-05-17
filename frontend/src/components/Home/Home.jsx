@@ -22,7 +22,7 @@ const HeroWrapper = styled.div`
 const HeroText = styled.div``;
 
 const HeadingPrimary = styled.h1`
-  font-size: 3.2rem;
+  font-size: 3rem;
   line-height: 1.4;
   letter-spacing: -0.5px;
   margin-bottom: 3.2rem;
@@ -30,7 +30,7 @@ const HeadingPrimary = styled.h1`
 `;
 
 const HeroDescription = styled.p`
-  font-size: 2rem;
+  font-size: 1.8rem;
   line-height: 1.6;
   margin-bottom: 4.8rem;
 `;
@@ -39,7 +39,7 @@ const NavLinkButton = styled(NavLink)`
   display: inline-block;
   font-size: 2rem;
   text-decoration: none;
-  padding: 1.2rem 3.2rem;
+  padding: 1rem 3rem;
   border-radius: 1rem;
   transition: background-color 0.6s;
 
