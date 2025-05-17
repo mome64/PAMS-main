@@ -8,7 +8,6 @@ const logIn = async (formData) => {
       body: JSON.stringify(formData),
     };
     const response = await fetch(`${api_url}/api/login`, requestOptions);
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Login failed:", error.message);
@@ -16,16 +15,33 @@ const logIn = async (formData) => {
   }
 };
 
+const forgotPassword = async (formData) => {
+  try {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    };
+    const response = await fetch(
+      `${api_url}/api/forgot-password`,
+      requestOptions
+    );
+    return response;
+  } catch (error) {
+    console.error("Forgot password failed:", error.message);
+    throw error;
+  }
+};
+
 const logOut = () => {
-  // Remove user_token from localStorage
   localStorage.removeItem("user_token");
-  // Trigger a storage event to notify other tabs
   localStorage.setItem("logoutEvent", Date.now().toString());
 };
 
 const loginService = {
   logIn,
   logOut,
+  forgotPassword,
 };
 
 export default loginService;

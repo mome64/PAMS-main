@@ -9,7 +9,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
 import Home from "./pages/Home/Home";
 import FAQ from "./components/Home/FAQ";
-
+import ForgotPassword from "./pages/Login/ForgotPassword";
 // Admin Pages
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminDepartment from "./pages/Admin/Department";
@@ -71,6 +71,7 @@ function App() {
         <Routes>
           {/* ********* Public Routes ******* */}
 
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<Home />}></Route>
           <Route path="/login" element={<Login />} />
           <Route path="/FAQ" element={<FAQ />} />

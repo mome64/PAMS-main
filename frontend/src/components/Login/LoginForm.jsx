@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Button from "../../ui/Button";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -18,7 +18,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [loginSuccess, setLoginSuccess] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // New state for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (loginError) {
@@ -57,7 +57,7 @@ function LoginForm() {
     try {
       const response = await loginService.logIn(formData);
       const data = await response.json();
-      console.log(data.data.userL);
+
       if (response.status === 200) {
         localStorage.setItem(
           "user_token",
@@ -66,14 +66,7 @@ function LoginForm() {
 
         setLoginError(null);
         setLoginSuccess("User login successful!");
-      } else {
-        setLoginSuccess(null);
-        setLoginError("Invalid username or password!");
-      }
 
-      setLoading(false);
-
-      if (response.status === 200) {
         const tokenData = JSON.parse(atob(data.data.user_token.split(".")[1]));
         const userRole = tokenData.user_role;
 
@@ -99,16 +92,18 @@ function LoginForm() {
         }
 
         setTimeout(() => {
-          if (navigate) {
-            navigate(redirectTo);
-            window.location.reload();
-          }
+          navigate(redirectTo);
+          window.location.reload();
         }, 1000);
+      } else {
+        setLoginSuccess(null);
+        setLoginError("Invalid username or password!");
       }
     } catch (error) {
       console.error("Login failed:", error.message);
       setLoginSuccess(null);
       setLoginError("An error occurred. Please try again later.");
+    } finally {
       setLoading(false);
     }
   };
@@ -121,7 +116,6 @@ function LoginForm() {
     }));
   };
 
-  // Function to toggle password visibility
   const togglePasswordView = () => {
     setShowPassword(!showPassword);
   };
@@ -173,7 +167,6 @@ function LoginForm() {
             onChange={handleChange}
             placeholder="Enter your password"
           />
-
           <BiSolidShow
             style={{
               position: "absolute",
@@ -194,6 +187,19 @@ function LoginForm() {
           {loading ? <SpinnerMini /> : "Log in"}
         </Button>
       </FormRowVertical>
+
+      <div style={{ textAlign: "center", marginTop: "10px" }}>
+        <Link
+          to="/forgot-password"
+          style={{
+            color: "#7DC400",
+            textDecoration: "underline",
+            fontSize: "14px",
+          }}
+        >
+          Forgot Password?
+        </Link>
+      </div>
     </Form>
   );
 }
