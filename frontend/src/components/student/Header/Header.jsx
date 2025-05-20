@@ -71,6 +71,8 @@ const StyledNavLink = styled(NavLink)`
 const StyledButton = styled.button`
   background-color: #7dc400;
   border: none;
+  display: flex;
+  place-items: center;
   border-radius: 20px;
   color: #ffffff;
   padding: 5px 10px;

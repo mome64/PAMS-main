@@ -29,6 +29,8 @@ const WelcomeMessage = styled.span`
 const StyledButton = styled.button`
   background-color: #08b3c1;
   border: none;
+  display: flex;
+  place-items: center;
   border-radius: 20px;
   color: #ffffff;
   padding: 5px 10px;
