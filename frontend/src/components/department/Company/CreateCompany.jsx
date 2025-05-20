@@ -9,9 +9,9 @@ import companyService from "../../../services/company.service";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../../context/AuthContext";
+
 const CreateCompany = () => {
   const { collage } = useAuth();
-  console.log(collage);
   const [formData, setFormData] = useState({
     company_name: "",
     phone_number: "",
@@ -19,6 +19,7 @@ const CreateCompany = () => {
     location: "",
     industry_sector: "",
     accepted_student_limit: "",
+    website: "",
     password: "",
     collage: collage,
   });
@@ -26,65 +27,119 @@ const CreateCompany = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = {};
+  const validateField = (name, value) => {
+    switch (name) {
+      case "company_name":
+        if (!value.trim()) return "Company name is required";
+        if (!/^[A-Za-z0-9\s&.,-]+$/.test(value))
+          return "Company name can only contain letters, numbers, spaces, &, ., -";
+        if (value.length < 3)
+          return "Company name must be at least 3 characters";
+        if (value.length > 100)
+          return "Company name must be less than 100 characters";
+        return "";
 
-    // Validate company name
-    if (!formData.company_name) {
-      newErrors.company_name = "Company name is required";
-      valid = false;
+      case "phone_number":
+        if (!value.trim()) return "Phone number is required";
+        const cleanedValue = value.replace(/[^\d+]/g, "");
+        const isMobile = /^(09|\+2519)\d{8}$/.test(cleanedValue);
+        const isFixedLine = /^(7|2517)\d{6,9}$/.test(cleanedValue);
+
+        if (!isMobile && !isFixedLine) {
+          return "Invalid Ethiopian phone number format";
+        }
+
+        if (isMobile) {
+          if (
+            (cleanedValue.startsWith("09") && cleanedValue.length !== 10) ||
+            (cleanedValue.startsWith("+2519") && cleanedValue.length !== 13)
+          ) {
+            return cleanedValue.startsWith("09")
+              ? "Local mobile must be 10 digits (09XXXXXXXX)"
+              : "International mobile must be 13 digits (+2519XXXXXXXX)";
+          }
+        } else {
+          if (
+            (cleanedValue.startsWith("7") && cleanedValue.length !== 7) ||
+            (cleanedValue.startsWith("2517") && cleanedValue.length !== 11)
+          ) {
+            return cleanedValue.startsWith("7")
+              ? "Local fixed line must be 7 digits (7XXXXXXX)"
+              : "International fixed must be 11 digits (2517XXXXXXX)";
+          }
+        }
+        return "";
+
+      case "contact_email":
+        if (!value.trim()) return "Contact email is required";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Invalid email format";
+        if (!value.toLowerCase().endsWith("@gmail.com"))
+          return "Only @gmail.com addresses are accepted";
+        return "";
+
+      case "location":
+        if (!value.trim()) return "Location is required";
+        if (!/^[A-Za-z0-9\s\-,.]+$/.test(value))
+          return "Location can only contain letters, numbers, spaces, - and ,";
+        return "";
+
+      case "industry_sector":
+        if (!value.trim()) return "Industry sector is required";
+        if (!/^[A-Za-z\s\-&]+$/.test(value))
+          return "Industry sector can only contain letters, spaces, & and -";
+        return "";
+
+      case "accepted_student_limit":
+        if (!value.trim()) return "Student limit is required";
+        if (isNaN(value) || Number(value) <= 0)
+          return "Must be a positive number";
+        if (Number(value) > 1000) return "Student limit cannot exceed 1000";
+        return "";
+
+      case "website":
+        if (
+          value &&
+          !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
+            value
+          )
+        )
+          return "Invalid website URL format";
+        return "";
+
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        if (!/[A-Z]/.test(value))
+          return "Password must contain at least one uppercase letter";
+        if (!/[a-z]/.test(value))
+          return "Password must contain at least one lowercase letter";
+        if (!/[0-9]/.test(value))
+          return "Password must contain at least one number";
+        if (!/[!@#$%^&*]/.test(value))
+          return "Password must contain at least one special character";
+        return "";
+
+      default:
+        return "";
     }
-
-    // Validate phone number
-    if (!formData.phone_number) {
-      newErrors.phone_number = "Phone number is required";
-      valid = false;
-    }
-
-    // Validate contact email
-    if (!formData.contact_email) {
-      newErrors.contact_email = "Contact email is required";
-      valid = false;
-    } else if (!isValidEmail(formData.contact_email)) {
-      newErrors.contact_email = "Invalid email format";
-      valid = false;
-    }
-
-    // Validate location
-    if (!formData.location) {
-      newErrors.location = "Location is required";
-      valid = false;
-    }
-
-    // Validate industry sector
-    if (!formData.industry_sector) {
-      newErrors.industry_sector = "Industry sector is required";
-      valid = false;
-    }
-
-    // Validate accepted student limit
-    if (!formData.accepted_student_limit) {
-      newErrors.accepted_student_limit = "Accepted student limit is required";
-      valid = false;
-    }
-
-    // Validate password
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-      valid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
   };
 
-  const isValidEmail = (email) => {
-    // Email validation logic
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    Object.keys(formData).forEach((field) => {
+      if (field === "collage") return; // Skip collage validation as it comes from context
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
@@ -95,11 +150,9 @@ const CreateCompany = () => {
     }
 
     try {
-      // Send post request to create company
       const response = await companyService.createCompany(formData);
 
       if (response.status === 400) {
-        // If department name already exists
         const responseData = await response.json();
         toast.error(responseData.error, { autoClose: 1000 });
         return;
@@ -121,6 +174,7 @@ const CreateCompany = () => {
           accepted_student_limit: "",
           website: "",
           password: "",
+          collage: collage,
         });
         setErrors({});
         toast.success(responseData.message, { autoClose: 2000 });
@@ -128,13 +182,9 @@ const CreateCompany = () => {
 
       setModalVisible(false);
     } catch (error) {
-      toast.error(
-        "Error to creating company:",
-        {
-          autoClose: 2000,
-        },
-        error.message
-      );
+      toast.error("Error creating company: " + error.message, {
+        autoClose: 2000,
+      });
     }
   };
 
@@ -144,10 +194,39 @@ const CreateCompany = () => {
       ...prevData,
       [id]: value,
     }));
+
+    // Validate field on change if it has an error
+    if (errors[id]) {
+      const error = validateField(id, value);
+      setErrors((prev) => ({
+        ...prev,
+        [id]: error || undefined,
+      }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { id, value } = e.target;
+    const error = validateField(id, value);
+    setErrors((prev) => ({
+      ...prev,
+      [id]: error || undefined,
+    }));
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
+    setFormData({
+      company_name: "",
+      phone_number: "",
+      contact_email: "",
+      location: "",
+      industry_sector: "",
+      accepted_student_limit: "",
+      website: "",
+      password: "",
+      collage: collage,
+    });
     setErrors({});
   };
 
@@ -167,24 +246,32 @@ const CreateCompany = () => {
                 autoComplete="on"
                 value={formData.company_name}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.company_name}
               />
             </FormRow>
             <FormRow label="Phone Number" error={errors.phone_number}>
               <Input
                 type="text"
                 id="phone_number"
-                autoComplete="on"
+                autoComplete="tel"
                 value={formData.phone_number}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.phone_number}
+                placeholder="e.g., 0912345678 or +251912345678"
               />
             </FormRow>
             <FormRow label="Contact Email" error={errors.contact_email}>
               <Input
-                type="text"
+                type="email"
                 id="contact_email"
-                autoComplete="on"
+                autoComplete="email"
                 value={formData.contact_email}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.contact_email}
+                placeholder="e.g., contact@company.com"
               />
             </FormRow>
             <FormRow label="Location" error={errors.location}>
@@ -194,6 +281,9 @@ const CreateCompany = () => {
                 autoComplete="on"
                 value={formData.location}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.location}
+                placeholder="e.g., Addis Ababa, Bole"
               />
             </FormRow>
             <FormRow label="Industry Sector" error={errors.industry_sector}>
@@ -203,6 +293,9 @@ const CreateCompany = () => {
                 autoComplete="on"
                 value={formData.industry_sector}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.industry_sector}
+                placeholder="e.g., Technology, Healthcare"
               />
             </FormRow>
             <FormRow
@@ -212,19 +305,25 @@ const CreateCompany = () => {
               <Input
                 type="number"
                 id="accepted_student_limit"
-                autoComplete="on"
+                min="1"
+                max="1000"
                 value={formData.accepted_student_limit}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.accepted_student_limit}
               />
             </FormRow>
 
-            <FormRow label="Website">
+            <FormRow label="Website" error={errors.website}>
               <Input
-                type="text"
+                type="url"
                 id="website"
                 autoComplete="on"
                 value={formData.website}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.website}
+                placeholder="e.g., https://company.com"
               />
             </FormRow>
 
@@ -232,9 +331,11 @@ const CreateCompany = () => {
               <Input
                 type="password"
                 id="password"
-                autoComplete="on"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                hasError={!!errors.password}
               />
             </FormRow>
 
@@ -247,7 +348,7 @@ const CreateCompany = () => {
               }}
             >
               <CancelButton onClick={handleCloseModal}>Cancel</CancelButton>
-              <Button>Create Company</Button>
+              <Button type="submit">Create Company</Button>
             </div>
           </Form>
         </Modal>
