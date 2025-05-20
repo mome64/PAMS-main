@@ -133,12 +133,6 @@ const TransactionForm = () => {
     }
   };
 
-  const handleEdit = () => {
-    const updated = [...transactions];
-    updated[editIndex] = { ...updated[editIndex], amount }; // Only update amount
-    setTransactions(updated);
-    closeModals();
-  };
   const handleDelete = async () => {
     console.log(transactions[deleteIndex]);
     const transactionToDelete = transactions[deleteIndex];
@@ -172,14 +166,6 @@ const TransactionForm = () => {
       console.error("Delete transaction error:", error);
       alert("Network or server error occurred.");
     }
-  };
-
-  const openEditModal = (index) => {
-    const item = transactions[index];
-    setSelectedDept(item.department); // Keep department as is
-    setAmount(item.amount); // Keep amount for editing
-    setEditIndex(index);
-    setIsEditModalOpen(true);
   };
 
   const openDeleteModal = (index) => {
@@ -226,12 +212,6 @@ const TransactionForm = () => {
               <td className="p-2">{tx.department}</td>
               <td className="p-2">{parseInt(tx.amount)}ETB</td>
               <td className="p-2 flex gap-2">
-                <button
-                  onClick={() => openEditModal(index)}
-                  className="text-blue-600"
-                >
-                  <EditIcon size={18} />
-                </button>
                 <button
                   onClick={() => openDeleteModal(index)}
                   className="text-red-600"
@@ -303,64 +283,6 @@ const TransactionForm = () => {
                 className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none text-lg font-semibold"
               >
                 Add
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div
-            className="p-8 rounded-lg w-full max-w-lg shadow-xl bg-white"
-            style={{
-              backgroundColor: "var(--color-bg)",
-              color: "var(--color-text)",
-            }}
-          >
-            <h2 className="text-2xl text-black font-semibold mb-6 text-center">
-              Edit Transaction
-            </h2>
-
-            {/* Department is fixed, not editable */}
-            <div
-              className="mb-6 p-4 rounded-lg border"
-              style={{
-                backgroundColor: "var(--color-grey-50)",
-                color: "var(--color-text)",
-                borderColor: "var(--color-border)",
-              }}
-            >
-              <label className="block mb-2 font-medium">Department</label>
-              <p>{selectedDept}</p> {/* Display selected department */}
-            </div>
-
-            <input
-              className="w-full mb-6 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-              style={{
-                backgroundColor: "var(--color-grey-50)",
-                color: "var(--color-text)",
-                borderColor: "var(--color-border)",
-              }}
-              type="number"
-              placeholder="Enter amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-
-            <div className="flex justify-between gap-4">
-              <button
-                onClick={closeModals}
-                className="w-full py-3 bg-gray-200 text-black rounded-lg hover:bg-gray-300 focus:outline-none text-lg font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleEdit}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none text-lg font-semibold"
-              >
-                Save
               </button>
             </div>
           </div>

@@ -11,37 +11,79 @@ const StyledUserAvatar = styled.div`
   font-weight: 500;
   font-size: 1.4rem;
   color: var(--color-grey-600);
+  position: relative;
 `;
 
 const Avatar = styled.img`
   display: block;
-  width: 4rem; /* Set your desired width */
-  height: 4rem; /* Set your desired height */
+  width: 4rem;
+  height: 4rem;
   aspect-ratio: 1;
   object-fit: cover;
   object-position: center;
   border-radius: 50%;
   outline: 2px solid var(--color-grey-100);
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+    outline-color: var(--color-brand-500);
+  }
+`;
+
+const UserInfoTooltip = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--color-grey-0);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--border-radius-md);
+  padding: 1.6rem;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  min-width: 24rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  ${StyledUserAvatar}:hover & {
+    display: flex;
+  }
+`;
+
+const UserInfoItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+`;
+
+const UserInfoLabel = styled.span`
+  font-weight: 600;
+  color: var(--color-grey-600);
+`;
+
+const UserInfoValue = styled.span`
+  color: var(--color-grey-700);
 `;
 
 function UserAvatar() {
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [userData, setUserData] = useState(null);
   const { userId } = useAuth();
 
   const fetchAdminPhoto = async () => {
     try {
-      // Fetch admin data including photo URL
       const response = await adminService.getAdminById(userId);
 
       if (response.ok) {
         const admin = await response.json();
+        setUserData(admin.data);
+
         if (admin.data.photo) {
-          // Adjust the photo URL by removing '/public' if present
           const adjustedPhotoUrl = admin.data.photo.replace("/public", "");
-          // Set the adjusted photo URL in state
           setPhotoUrl(adjustedPhotoUrl);
         } else {
-          // If photo URL is not available, set default photo URL
           setPhotoUrl(defaultAvatar);
         }
       } else {
@@ -49,7 +91,6 @@ function UserAvatar() {
       }
     } catch (error) {
       console.error("Error fetching admin data:", error);
-      // If error occurs, set default photo URL
       setPhotoUrl(defaultAvatar);
     }
   };
@@ -59,11 +100,35 @@ function UserAvatar() {
   }, [userId]);
 
   return (
-    <>
-      <StyledUserAvatar>
-        <Avatar src={`/${photoUrl || "default.png"}`} alt=" Avatar" />
-      </StyledUserAvatar>
-    </>
+    <StyledUserAvatar>
+      <Avatar src={`/${photoUrl || "default.png"}`} alt="User Avatar" />
+
+      {userData && (
+        <UserInfoTooltip>
+          <UserInfoItem>
+            <UserInfoLabel>User Name:</UserInfoLabel>
+            <UserInfoValue>{userData.username}</UserInfoValue>
+          </UserInfoItem>
+
+          <UserInfoItem>
+            <UserInfoLabel>Email:</UserInfoLabel>
+            <UserInfoValue>{userData.email}</UserInfoValue>
+          </UserInfoItem>
+
+          <UserInfoItem>
+            <UserInfoLabel>Role:</UserInfoLabel>
+            <UserInfoValue>{userData.college_name}</UserInfoValue>
+          </UserInfoItem>
+
+          {userData.phone_number && (
+            <UserInfoItem>
+              <UserInfoLabel>Phone:</UserInfoLabel>
+              <UserInfoValue>{userData.phone_number}</UserInfoValue>
+            </UserInfoItem>
+          )}
+        </UserInfoTooltip>
+      )}
+    </StyledUserAvatar>
   );
 }
 

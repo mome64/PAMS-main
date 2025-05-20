@@ -40,12 +40,66 @@ function UpdateProfile() {
   useEffect(() => {
     fetchAdminData();
   }, [userId]);
-  console.log(userId);
+
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "first_name":
+        if (!value.trim()) {
+          error = "First Name is required";
+        } else if (value.length < 2) {
+          error = "First Name must be at least 2 characters";
+        } else if (!/^[a-zA-Z]+$/.test(value)) {
+          error = "First Name can only contain letters";
+        }
+        break;
+      case "last_name":
+        if (!value.trim()) {
+          error = "Last Name is required";
+        } else if (value.length < 2) {
+          error = "Last Name must be at least 2 characters";
+        } else if (!/^[a-zA-Z]+$/.test(value)) {
+          error = "Last Name can only contain letters";
+        }
+        break;
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+      case "photo":
+        if (value && value !== "default.jpg") {
+          const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+          const maxSize = 2 * 1024 * 1024; // 2MB
+          if (value.size > maxSize) {
+            error = "Image size must be less than 2MB";
+          } else if (!allowedTypes.includes(value.type)) {
+            error = "Only JPG, PNG, or GIF images are allowed";
+          }
+        }
+        break;
+      default:
+        break;
+    }
+
+    return error;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+
+    // Validate field on change
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
     }));
   };
 
@@ -53,33 +107,44 @@ function UpdateProfile() {
     const file = e.target.files[0];
     setFormData((prevData) => ({
       ...prevData,
-      photo: file,
+      photo: file || "default.jpg",
     }));
+
+    // Validate file
+    const error = validateField("photo", file);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      photo: error,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate all fields
+    Object.keys(formData).forEach((key) => {
+      if (key !== "photo" || formData[key] !== "default.jpg") {
+        const error = validateField(key, formData[key]);
+        if (error) {
+          newErrors[key] = error;
+        }
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = {};
-    if (!formData.first_name) {
-      errors.first_name = "First Name is required";
-    }
-    if (!formData.last_name) {
-      errors.last_name = "Last Name is required";
-    }
-    if (!formData.email) {
-      errors.email = "Email is required";
-    }
 
-    setErrors(errors);
-
-    // If there are no errors, submit the form
-    if (Object.keys(errors).length === 0) {
+    if (validateForm()) {
       try {
         const formDataWithFile = new FormData();
         formDataWithFile.append("first_name", formData.first_name);
         formDataWithFile.append("last_name", formData.last_name);
         formDataWithFile.append("email", formData.email);
-        if (formData.photo) {
+        if (formData.photo && formData.photo !== "default.jpg") {
           formDataWithFile.append("photo", formData.photo);
         }
 
@@ -138,7 +203,7 @@ function UpdateProfile() {
         />
       </FormRow>
 
-      <FormRow label="Profile Photo">
+      <FormRow label="Profile Photo" error={errors?.photo}>
         <Input
           type="file"
           id="photo"
@@ -157,7 +222,7 @@ function UpdateProfile() {
               first_name: "",
               last_name: "",
               email: "",
-              photo: null,
+              photo: "default.jpg",
             })
           }
         >

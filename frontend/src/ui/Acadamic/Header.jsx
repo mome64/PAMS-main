@@ -17,7 +17,7 @@ const StyledHeader = styled.header`
 function Header() {
   return (
     <StyledHeader>
-      <NavLink to="/admin/account" activeClassName="active">
+      <NavLink to="/acadamic/dashboard" activeClassName="active">
         <UserAvatar />
       </NavLink>
 

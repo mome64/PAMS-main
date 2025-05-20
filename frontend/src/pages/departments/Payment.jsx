@@ -64,7 +64,7 @@ function Payment({ student, disabled }) {
       try {
         const res = await fetch("http://localhost:8080/api/transactions");
         const data = await res.json();
-       
+
         if (res.ok) {
           setDepamount(data.data); // assuming your backend returns { data: [...] }
         } else {
@@ -148,12 +148,16 @@ function Payment({ student, disabled }) {
           <input
             type="hidden"
             name="public_key"
-            value="CHAPUBK_TEST-FHbUiBCjgXrWgBSBtEtuWfDbZ1XnOzAf"
+            value="CHAPUBK_TEST-OjDsNuOTl2PSUVrkBZU8i4wZVDfk3EUL"
           />
           <input type="hidden" name="tx_ref" value={txRef} />
           <input type="hidden" name="amount" value={payAmount} />
           <input type="hidden" name="currency" value="ETB" />
-          <input type="hidden" name="email" value={student.contact_email} />
+          <input
+            type="hidden"
+            name="email"
+            value="mesoudmohammed393@gmail.com"
+          />
           <input type="hidden" name="first_name" value={student.first_name} />
           <input type="hidden" name="last_name" value={student.last_name} />
           <input
