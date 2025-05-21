@@ -82,14 +82,18 @@ const StudentPlacement = () => {
   async function assignStudentsToCompanies() {
     try {
       // Initialize data structures
-      const companyMap = new Map(companiesData.map(company => [company.company_id, company]));
-      const assignments = new Map(companiesData.map(company => [
-        company.company_id, 
-        { company, students: [] }
-      ]));
+      const companyMap = new Map(
+        companiesData.map((company) => [company.company_id, company])
+      );
+      const assignments = new Map(
+        companiesData.map((company) => [
+          company.company_id,
+          { company, students: [] },
+        ])
+      );
       const unassignedStudents = [];
 
-      // Get all students and sort by application time (earliest first)
+      // Get all students and sort by GPA (higher first) then application time (earlier first)
       const studentsResponse = await studentService.getAllApplyStudents();
       if (!studentsResponse?.status || !studentsResponse.students) {
         console.error("Failed to fetch student data");
@@ -97,13 +101,23 @@ const StudentPlacement = () => {
       }
 
       const allStudents = studentsResponse.students
-        .filter(student => student?.preferences)
-        .sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
+        .filter((student) => student?.preferences)
+        .sort((a, b) => {
+          // First sort by GPA (descending)
+          if (b.gpa !== a.gpa) {
+            return b.gpa - a.gpa;
+          }
+          // Then by application time (ascending)
+          return new Date(a.created_time) - new Date(b.created_time);
+        });
 
       // Process each student's preferences
-      allStudents.forEach(student => {
+      allStudents.forEach((student) => {
         try {
-          const prefs = student.preferences.split(",").map(Number).filter(Boolean);
+          const prefs = student.preferences
+            .split(",")
+            .map(Number)
+            .filter(Boolean);
           if (prefs.length === 0) {
             unassignedStudents.push(student);
             return;
@@ -117,7 +131,9 @@ const StudentPlacement = () => {
             const company = companyMap.get(companyId);
             if (!company) continue;
 
-            if (companyAssignment.students.length < company.accepted_student_limit) {
+            if (
+              companyAssignment.students.length < company.accepted_student_limit
+            ) {
               companyAssignment.students.push(student);
               return; // Student assigned, move to next student
             }
@@ -126,42 +142,65 @@ const StudentPlacement = () => {
           // If we get here, student couldn't be assigned to any preference
           unassignedStudents.push(student);
         } catch (error) {
-          console.error(`Error processing student ${student.student_id}:`, error);
+          console.error(
+            `Error processing student ${student.student_id}:`,
+            error
+          );
           unassignedStudents.push(student);
         }
       });
 
       // Now handle cases where students compete for the same spots
-      // We need to prioritize based on preference order and application time
-      assignments.forEach(assignment => {
-        if (assignment.students.length <= assignment.company.accepted_student_limit) {
+      // We need to prioritize based on GPA, then preference order, then application time
+      assignments.forEach((assignment) => {
+        if (
+          assignment.students.length <=
+          assignment.company.accepted_student_limit
+        ) {
           return; // No competition for spots
         }
 
-        // Sort students by: 
-        // 1. Their preference priority for this company (lower index = higher priority)
-        // 2. Application time (earlier = higher priority)
+        // Sort students by:
+        // 1. GPA (higher first)
+        // 2. Their preference priority for this company (lower index = higher priority)
+        // 3. Application time (earlier = higher priority)
         assignment.students.sort((a, b) => {
-          const aPrefIndex = a.preferences.split(",").map(Number).indexOf(assignment.company.company_id);
-          const bPrefIndex = b.preferences.split(",").map(Number).indexOf(assignment.company.company_id);
-          
-          // First sort by preference index (lower = better)
+          // First by GPA (descending)
+          if (b.gpa !== a.gpa) {
+            return b.gpa - a.gpa;
+          }
+
+          // Then by preference index (lower = better)
+          const aPrefIndex = a.preferences
+            .split(",")
+            .map(Number)
+            .indexOf(assignment.company.company_id);
+          const bPrefIndex = b.preferences
+            .split(",")
+            .map(Number)
+            .indexOf(assignment.company.company_id);
           if (aPrefIndex !== bPrefIndex) {
             return aPrefIndex - bPrefIndex;
           }
-          
-          // Then by application time (earlier = better)
+
+          // Finally by application time (earlier = better)
           return new Date(a.created_time) - new Date(b.created_time);
         });
 
         // Trim to accepted student limit
-        assignment.students = assignment.students.slice(0, assignment.company.accepted_student_limit);
+        assignment.students = assignment.students.slice(
+          0,
+          assignment.company.accepted_student_limit
+        );
       });
 
       // Handle unassigned students (try to assign to any company with remaining spots)
-      unassignedStudents.forEach(student => {
+      unassignedStudents.forEach((student) => {
         for (const [companyId, assignment] of assignments) {
-          if (assignment.students.length < assignment.company.accepted_student_limit) {
+          if (
+            assignment.students.length <
+            assignment.company.accepted_student_limit
+          ) {
             // Check if student included this company in their preferences
             try {
               const prefs = student.preferences.split(",").map(Number);
@@ -170,7 +209,10 @@ const StudentPlacement = () => {
                 return; // Student assigned, move to next
               }
             } catch (error) {
-              console.error(`Error processing unassigned student ${student.student_id}:`, error);
+              console.error(
+                `Error processing unassigned student ${student.student_id}:`,
+                error
+              );
             }
           }
         }
@@ -178,11 +220,11 @@ const StudentPlacement = () => {
 
       // Prepare final results
       const flattenedResults = [];
-      assignments.forEach(assignment => {
-        assignment.students.forEach(student => {
+      assignments.forEach((assignment) => {
+        assignment.students.forEach((student) => {
           flattenedResults.push({
             student_id: student.student_id,
-            company_id: assignment.company.company_id
+            company_id: assignment.company.company_id,
           });
         });
       });

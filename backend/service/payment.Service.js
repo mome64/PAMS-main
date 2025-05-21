@@ -16,7 +16,7 @@ async function saveTransaction(tx_ref) {
     );
 
     const transaction = response.data;
-    console.log(transaction);
+
     // 2. Check if the transaction is successful
     if (
       transaction.status === "success" &&
