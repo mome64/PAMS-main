@@ -4,7 +4,6 @@ import companyService from "../../../services/company.service";
 import { FaEdit } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 import styled from "styled-components";
-
 import { toast } from "react-toastify";
 import Spinner from "../../../ui/Spinner";
 import { CiSearch } from "react-icons/ci";
@@ -16,6 +15,7 @@ import studentService from "../../../services/student.service";
 import Payment from "../../../pages/departments/Payment";
 import departmentService from "../../../services/department.service";
 import { useAuth } from "../../../context/AuthContext";
+
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -47,9 +47,8 @@ const SearchInput = styled.input`
   margin-left: 1px;
   padding: 7px;
   border: 1px solid #ccc;
-  background: var(--color-grey-100)
+  background: var(--color-grey-100);
   font-size: 1.4rem;
-
 `;
 
 const ActionsWrapper = styled.div`
@@ -82,6 +81,43 @@ const DeleteIcon = styled(FaRegTrashAlt)`
   font-size: 18px;
 `;
 
+const NoStudentsMessage = styled.div`
+  padding: 20px;
+  text-align: center;
+  background-color: var(--color-grey-100);
+  border-radius: 8px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: var(--color-grey-600);
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+const StatCard = styled.div`
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  margin: 0 10px;
+  text-align: center;
+`;
+
+const StatTitle = styled.h3`
+  margin-top: 0;
+  color: var(--color-grey-600);
+`;
+
+const StatValue = styled.p`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 0;
+`;
+
 const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
@@ -89,6 +125,8 @@ const StudentList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [departments, setDepartments] = useState([]);
+  const [mostStudentsDept, setMostStudentsDept] = useState(null);
+  const [nonStudentsCount, setNonStudentsCount] = useState(0);
   const studentsPerPage = 5;
   const DepartmentPerPage = 20;
   const { collage } = useAuth();
@@ -117,13 +155,13 @@ const StudentList = () => {
           );
 
           setDepartments(departmentsData);
-
-          setLoading(false);
         } else {
           console.error("Failed to fetch departments:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching departments:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchDepartments();
@@ -138,7 +176,7 @@ const StudentList = () => {
           studentsPerPage
         );
 
-        await new Promise((resolve) => setTimeout(resolve, 400)); // Simulate loading
+        await new Promise((resolve) => setTimeout(resolve, 400));
 
         if (response.ok) {
           const responseData = await response.json();
@@ -156,7 +194,7 @@ const StudentList = () => {
               id: (currentPage - 1) * studentsPerPage + index + 1,
             }));
 
-          setStudents(studentsData); // Replace data to avoid duplicates
+          setStudents(studentsData);
           setTotalStudents(responseData.totalCount);
         } else {
           console.error("Failed to fetch students:", response.statusText);
@@ -169,13 +207,36 @@ const StudentList = () => {
     };
 
     fetchStudents();
-  }, [currentPage, studentsPerPage]);
+  }, [currentPage, studentsPerPage, collage]);
+
+  useEffect(() => {
+    const fetchDepartmentStats = async () => {
+      try {
+        const response = await studentService.getDepartmentStats();
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.departmentStats && data.departmentStats.length > 0) {
+            const sorted = [...data.departmentStats].sort(
+              (a, b) => b.studentCount - a.studentCount
+            );
+            setMostStudentsDept(sorted[0]);
+          }
+
+          setNonStudentsCount(data.nonStudentsCount || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching department stats:", error);
+      }
+    };
+
+    fetchDepartmentStats();
+  }, []);
 
   const handleSearchTextChange = (event) => {
     setSearchText(event.target.value.toLowerCase());
   };
 
-  // Optional: apply client-side search filter
   const filteredStudents = students.filter(
     (student) =>
       student.first_name.toLowerCase().includes(searchText) ||
@@ -186,33 +247,38 @@ const StudentList = () => {
 
   return (
     <>
-      <div style={{ position: "relative" }}>
-        <SearchInput
-          style={{
-            borderRadius: "15px",
-            paddingLeft: "40px",
-            width: "55%",
-            maxWidth: "60%",
-          }}
-          type="text"
-          value={searchText}
-          onChange={handleSearchTextChange}
-          placeholder="Search by student name, email, or phone"
-        />
-        <CiSearch
-          style={{
-            position: "absolute",
-            left: "10px",
-            top: "10%",
-            fontSize: "28px",
-          }}
-        />
-      </div>
-
       {loading ? (
         <Spinner />
+      ) : filteredStudents.length === 0 ? (
+        <NoStudentsMessage>
+          {students.length === 0
+            ? "No students have registered yet."
+            : "No students match your search criteria."}
+        </NoStudentsMessage>
       ) : (
         <>
+          <div style={{ position: "relative" }}>
+            <SearchInput
+              style={{
+                borderRadius: "15px",
+                paddingLeft: "40px",
+                width: "55%",
+                maxWidth: "60%",
+              }}
+              type="text"
+              value={searchText}
+              onChange={handleSearchTextChange}
+              placeholder="Search by student name, email, or phone"
+            />
+            <CiSearch
+              style={{
+                position: "absolute",
+                left: "10px",
+                top: "10%",
+                fontSize: "28px",
+              }}
+            />
+          </div>
           <Table>
             <TableHead>
               <TableRow>

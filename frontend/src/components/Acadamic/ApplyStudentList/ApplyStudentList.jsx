@@ -103,7 +103,8 @@ const ApplyStudentList = ({ showCompany }) => {
       console.log(response);
       if (response?.students) {
         const filteredStudents = response.students?.filter(
-          (student) => student.college_name.toLowerCase() === collage.toLowerCase()
+          (student) =>
+            student.college_name.toLowerCase() === collage.toLowerCase()
         );
         setData(filteredStudents);
       }

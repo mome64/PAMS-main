@@ -102,12 +102,53 @@ function Dashboard() {
   const [numStudents, setNumStudents] = useState(0);
   const [numAdmins, setNumAdmins] = useState(0);
   const [numApplyStudents, setNumApplyStudents] = useState([]);
-
+  const [departments, setDepartments] = useState([]);
   const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [loadingCompanies, setLoadingCompanies] = useState(true);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [loadingAdmins, setLoadingAdmins] = useState(true);
   const [loadingApplyStudents, setLoadingApplyStudents] = useState(true);
+  const DepartmentPerPage = 20;
+
+  const page = 1;
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await departmentService.getAllDepartments(
+          page,
+          DepartmentPerPage
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 400));
+
+        if (response.ok) {
+          const responseData = await response.json();
+
+          const normalizedCollage =
+            typeof collage === "string" ? collage.toLowerCase() : "";
+
+          const departmentsData = responseData.departments
+            ?.filter(
+              (department) =>
+                department?.college_name.toLowerCase() === normalizedCollage
+            )
+            .map((department, index) => ({
+              ...department,
+              id: (page - 1) * DepartmentPerPage + index + 1,
+            }));
+
+          setDepartments(departmentsData);
+          setNumDepartments(departmentsData.length);
+        } else {
+          console.error("Failed to fetch departments:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+    fetchDepartments();
+  }, [page]);
 
   useEffect(() => {
     async function fetchData() {
@@ -138,8 +179,6 @@ function Dashboard() {
           (company) => company.college_name.toLowerCase() === normalizedCollage
         );
         setNumCompanies(filteredCompanies.length);
-
-        setNumDepartments(departmentData.totalCount);
 
         const filterApplyStud = applyStudentResponse.students.filter(
           (stud) => stud.college_name.toLowerCase() === normalizedCollage
