@@ -3,7 +3,7 @@ const paymentService = require("../service/payment.Service");
 async function chapaCallback(req, res) {
   const { tx_ref } = req.query;
 
-  //   console.log("Received tx_ref:", tx_ref);
+  // console.log("Received tx_ref:", tx_ref);
 
   if (!tx_ref) {
     return res.status(400).json({
@@ -57,4 +57,4 @@ async function getAllTransactions(req, res) {
     });
   }
 }
-module.exports = { chapaCallback ,getAllTransactions};
+module.exports = { chapaCallback, getAllTransactions };

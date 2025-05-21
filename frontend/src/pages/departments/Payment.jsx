@@ -51,7 +51,7 @@ function Payment({ student, disabled }) {
 
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [hasPaid]);
 
   useEffect(() => {
     if (departments.length > 0) {
@@ -112,6 +112,7 @@ function Payment({ student, disabled }) {
         setTransactions(allTransactions);
 
         // Now check if student has already paid (by matching name and email)
+
         const found = allTransactions.find(
           (tx) =>
             tx.first_name.toLowerCase() === student.first_name.toLowerCase() &&
@@ -153,11 +154,7 @@ function Payment({ student, disabled }) {
           <input type="hidden" name="tx_ref" value={txRef} />
           <input type="hidden" name="amount" value={payAmount} />
           <input type="hidden" name="currency" value="ETB" />
-          <input
-            type="hidden"
-            name="email"
-            value="mesoudmohammed393@gmail.com"
-          />
+          <input type="hidden" name="email" value={student.contact_email} />
           <input type="hidden" name="first_name" value={student.first_name} />
           <input type="hidden" name="last_name" value={student.last_name} />
           <input
@@ -183,7 +180,7 @@ function Payment({ student, disabled }) {
           <input
             type="hidden"
             name="return_url"
-            value="http://localhost:5173/acadamic/student"
+            value="http://localhost:5173/acadamic/dashboard"
           />
           <input type="hidden" name="meta[title]" value="Student Practical" />
           {disabled ? (

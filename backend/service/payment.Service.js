@@ -10,13 +10,13 @@ async function saveTransaction(tx_ref) {
       `https://api.chapa.co/v1/transaction/verify/${tx_ref}`,
       {
         headers: {
-          Authorization: `Bearer CHASECK_TEST-SkGbDjlClafdP3qezBthpYzoe5tC3Sdj`,
+          Authorization: `Bearer CHASECK_TEST-odtNG5zbPHMBemTiOclspztEZALXOrxg`,
         },
       }
     );
 
     const transaction = response.data;
-
+    console.log(transaction);
     // 2. Check if the transaction is successful
     if (
       transaction.status === "success" &&
