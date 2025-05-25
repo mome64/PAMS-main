@@ -233,10 +233,6 @@ const DepartmentList = () => {
     setSearchText(searchText);
   };
 
-  const handleEdit = (departmentId) => {
-    setEditingDepartmentId(departmentId);
-  };
-
   const handleCancelEdit = () => {
     setEditingDepartmentId(null);
   };
@@ -384,11 +380,6 @@ const DepartmentList = () => {
                   <TableCell>{department.office_location}</TableCell>
                   <TableCell>
                     <ActionsWrapper>
-                      <IconButton
-                        onClick={() => handleEdit(department.department_id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
                       <IconButton
                         onClick={() => handleDelete(department.department_id)}
                       >

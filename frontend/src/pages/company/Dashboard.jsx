@@ -66,7 +66,6 @@ const IconContainer = styled.div`
 `;
 
 function CompanyDashboard() {
-  const [numCompanies, setNumCompanies] = useState(0);
   const [numStudents, setNumStudents] = useState(0);
   const [numResults, setNumResults] = useState(0);
 
@@ -85,7 +84,7 @@ function CompanyDashboard() {
           const companyData = await companyResponse.json();
           const studentData = await studentResponse.json();
           console.log(studentData);
-          setNumCompanies(companyData.companies.length);
+
           setNumStudents(studentData.length);
           setNumResults(companyData.results.length); // Example to handle result data
         } else {
@@ -111,15 +110,6 @@ function CompanyDashboard() {
             <FaUserGraduate color="#0984e3" />
           </IconContainer>
           <StyledLink href="/students">See Details</StyledLink>
-        </Box>
-
-        <Box>
-          <h2>Number of Companies</h2>
-          <h3>{numCompanies}</h3>
-          <IconContainer>
-            <MdBusiness color="#0984e3" />
-          </IconContainer>
-          <StyledLink href="/companies">See Details</StyledLink>
         </Box>
 
         <Box>

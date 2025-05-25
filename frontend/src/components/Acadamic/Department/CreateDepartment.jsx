@@ -45,8 +45,8 @@ const CreateDepartment = () => {
 
       case "phone_number":
         if (!value.trim()) error = "Phone number is required";
-        else if (!/^\d{10,15}$/.test(value))
-          error = "Phone number must be 10-15 digits";
+        else if (!/^\d{10}$/.test(value))
+          error = "Phone number must be 10 digits";
         break;
 
       case "contact_email":
@@ -74,8 +74,7 @@ const CreateDepartment = () => {
           error = "Password must contain at least one lowercase letter";
         else if (!/[0-9]/.test(value))
           error = "Password must contain at least one number";
-        else if (!/[^A-Za-z0-9]/.test(value))
-          error = "Password must contain at least one special character";
+
         break;
 
       default:

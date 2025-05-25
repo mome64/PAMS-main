@@ -56,7 +56,28 @@ const CancelButton = styled(Button)`
   background-color: red;
 `;
 
-const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+`;
+
+const DateInputContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+`;
+
+const SendResults = ({
+  studentId,
+  departmentId,
+  companyId,
+  onClose,
+  onSuccess,
+}) => {
   const [formData, setFormData] = useState({
     commitment: "",
     courtesy: "",
@@ -77,53 +98,92 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
     total_hours: "",
   });
 
+  const [errors, setErrors] = useState({
+    dateRange: "",
+    form: "",
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Regular expression to allow only letters, underscores, and dollar signs
-    const regex = /^[a-zA-Z_$ ]*$/;
+    // Clear errors when user changes input
+    if (errors.dateRange || errors.form) {
+      setErrors({ dateRange: "", form: "" });
+    }
 
-    // Check if the input element is a number type
+    // Validation for number inputs
     if (e.target.type === "number") {
-      // Extract max allowed value from label text
-      const labelValue = parseFloat(e.target.labels[0].innerText.match(/\d+/));
-      const maxAllowedValue = labelValue;
+      const labelText = e.target.labels[0].innerText;
+      const maxValueMatch = labelText.match(/\d+/);
+      const maxValue = maxValueMatch ? parseFloat(maxValueMatch[0]) : Infinity;
 
       if (
         value === "" ||
-        (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowedValue)
+        (parseFloat(value) >= 0 && parseFloat(value) <= maxValue)
       ) {
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
       }
-    } else if (e.target.type === "text") {
-      // Check if the input value matches the regular expression
-      if (regex.test(value)) {
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
-      }
-    } else {
-      // For non-number and non-text inputs, update form data directly
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      return;
     }
+
+    // Validation for text inputs (letters and spaces only)
+    if (e.target.type === "text") {
+      const regex = /^[a-zA-Z\s]*$/;
+      if (regex.test(value) || value === "") {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+      return;
+    }
+
+    // For other input types (date, etc.)
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateDates = () => {
+    if (!formData.attachment_from_date || !formData.attachment_to_date) {
+      setErrors((prev) => ({ ...prev, form: "Please fill all date fields" }));
+      return false;
+    }
+
+    const fromDate = new Date(formData.attachment_from_date);
+    const toDate = new Date(formData.attachment_to_date);
+
+    if (toDate < fromDate) {
+      setErrors((prev) => ({
+        ...prev,
+        dateRange: "End date cannot be earlier than start date",
+      }));
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateForm = () => {
+    // Check all required fields are filled
+    const requiredFields = Object.entries(formData).filter(
+      ([key, value]) => value === ""
+    );
+    if (requiredFields.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        form: "Please fill all required fields",
+      }));
+      return false;
+    }
+
+    // Validate dates
+    if (!validateDates()) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Check if all fields are filled
-    const isFormFilled = Object.values(formData).every((value) => value !== "");
 
-    if (!isFormFilled) {
-      toast.error("Please fill all fields before submitting", {
-        autoClose: 1000,
-      });
+    if (!validateForm()) {
       return;
     }
 
@@ -134,13 +194,14 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
         department_id: departmentId,
         ...formData,
       });
-      toast.success("Form submitted successfully!", { autoClose: 1000 });
+      toast.success("Results submitted successfully!", { autoClose: 2000 });
       setTimeout(() => {
-        console.log("Results saved successfully", formData);
         onClose();
+        if (onSuccess) onSuccess();
       }, 2000);
     } catch (error) {
       console.error("Error saving results:", error);
+      toast.error("Failed to submit results. Please try again.");
     }
   };
 
@@ -162,9 +223,15 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
         </h2>
 
         <br />
-
         <hr />
+
         <Form onSubmit={handleSubmit}>
+          {errors.form && (
+            <ErrorMessage style={{ marginBottom: "20px" }}>
+              {errors.form}
+            </ErrorMessage>
+          )}
+
           <h1>Personality and Behavioral Traits (15%)</h1>
           <div
             style={{
@@ -176,7 +243,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
             <br />
             <InputContainer>
               <div>
-                <Label htmlFor="commitment" maxAllowed="3">
+                <Label htmlFor="commitment">
                   Commitment (Attitude towards work showing enthusiasm and
                   interest) 3%
                 </Label>
@@ -186,6 +253,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="commitment"
                   value={formData.commitment}
                   onChange={handleChange}
+                  min="0"
+                  max="3"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
@@ -198,6 +269,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="courtesy"
                   value={formData.courtesy}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
             </InputContainer>
@@ -213,11 +288,15 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="conduct"
                   value={formData.conduct}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
                 <Label htmlFor="perseverance">
-                  perseverance and Industriousness (sincerity and seriousness
+                  Perseverance and Industriousness (sincerity and seriousness
                   towards works) 2%
                 </Label>
                 <Input
@@ -226,12 +305,16 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="perseverance"
                   value={formData.perseverance}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
 
               <div>
                 <Label htmlFor="teamwork">
-                  teamwork (can work harmoniously with other employees) 2%
+                  Teamwork (can work harmoniously with other employees) 2%
                 </Label>
                 <Input
                   type="number"
@@ -239,11 +322,15 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="teamwork"
                   value={formData.teamwork}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
                 <Label htmlFor="professional_ethics">
-                  professionalEthics (position of traits necessary for
+                  Professional Ethics (position of traits necessary for
                   employment in this kind) 2%
                 </Label>
                 <Input
@@ -252,11 +339,15 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="professional_ethics"
                   value={formData.professional_ethics}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
                 <Label htmlFor="creativity">
-                  creativity and possess initiative in daily task 2%
+                  Creativity and possess initiative in daily task 2%
                 </Label>
                 <Input
                   type="number"
@@ -264,6 +355,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="creativity"
                   value={formData.creativity}
                   onChange={handleChange}
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  required
                 />
               </div>
             </InputContainer>
@@ -271,7 +366,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
 
           <hr />
           <br />
-          <h1>Work-Related Performance Indicator (25%) </h1>
+          <h1>Work-Related Performance Indicator (25%)</h1>
           <div
             style={{
               border: "1px solid green",
@@ -291,6 +386,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="technical_knowledge"
                   value={formData.technical_knowledge}
                   onChange={handleChange}
+                  min="0"
+                  max="8"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
@@ -303,6 +402,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="efficiency"
                   value={formData.efficiency}
                   onChange={handleChange}
+                  min="0"
+                  max="7"
+                  step="0.1"
+                  required
                 />
               </div>
             </InputContainer>
@@ -319,6 +422,10 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="professional_comments"
                   value={formData.professional_comments}
                   onChange={handleChange}
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  required
                 />
               </div>
               <div>
@@ -332,13 +439,17 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="attendance"
                   value={formData.attendance}
                   onChange={handleChange}
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  required
                 />
               </div>
             </InputContainer>
           </div>
           <hr />
           <br />
-          <h1>General information </h1>
+          <h1>General Information</h1>
           <div
             style={{
               border: "1px solid green",
@@ -355,6 +466,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="advisor_name"
                   value={formData.advisor_name}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </InputContainer>
@@ -368,22 +480,14 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="department_assigned"
                   value={formData.department_assigned}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </InputContainer>
 
             <InputContainer>
-              <Label>Inclusive Date of Attachment From</Label>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "20px",
-                  textAlign: "center",
-                  alignContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              <Label>Inclusive Date of Attachment</Label>
+              <DateInputContainer>
                 From
                 <Input
                   type="date"
@@ -391,6 +495,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="attachment_from_date"
                   value={formData.attachment_from_date}
                   onChange={handleChange}
+                  required
                 />
                 To
                 <Input
@@ -399,8 +504,13 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="attachment_to_date"
                   value={formData.attachment_to_date}
                   onChange={handleChange}
+                  min={formData.attachment_from_date}
+                  required
                 />
-              </div>
+              </DateInputContainer>
+              {errors.dateRange && (
+                <ErrorMessage>{errors.dateRange}</ErrorMessage>
+              )}
             </InputContainer>
 
             <InputContainer>
@@ -412,16 +522,22 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="area_of_work"
                   value={formData.area_of_work}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div>
-                <Label htmlFor="total_hours">Total Working Hours 800</Label>
+                <Label htmlFor="total_hours">
+                  Total Working Hours (max 800)
+                </Label>
                 <Input
                   type="number"
                   id="total_hours"
                   name="total_hours"
                   value={formData.total_hours}
                   onChange={handleChange}
+                  min="0"
+                  max="800"
+                  required
                 />
               </div>
             </InputContainer>
@@ -429,7 +545,9 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
 
           <ButtonContainer>
             <Button type="submit">Send</Button>
-            <CancelButton onClick={onClose}>Cancel</CancelButton>
+            <CancelButton type="button" onClick={onClose}>
+              Cancel
+            </CancelButton>
           </ButtonContainer>
         </Form>
         <ToastContainer />

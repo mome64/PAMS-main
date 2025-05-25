@@ -116,7 +116,7 @@ function UserAvatar() {
           </UserInfoItem>
 
           <UserInfoItem>
-            <UserInfoLabel>Role:</UserInfoLabel>
+            <UserInfoLabel>Collage:</UserInfoLabel>
             <UserInfoValue>{userData.college_name}</UserInfoValue>
           </UserInfoItem>
 
